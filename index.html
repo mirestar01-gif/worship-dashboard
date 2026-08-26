@@ -286,7 +286,7 @@ const DATA = {
 };
 
 let currentYear = 2026;
-let selectedMonth = new Date().getMonth()+1;
+let selectedMonth = null;
 
 function changeYear(d){
   currentYear += d;
@@ -349,7 +349,6 @@ function initStats(){
 }
 
 renderCalendar();
-renderDetail(selectedMonth);
 initStats();
 </script>
 </body>
