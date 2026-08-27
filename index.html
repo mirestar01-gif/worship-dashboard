@@ -160,7 +160,7 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb}
 </div>
 <div class="wrap">
 <div class="stats-row">
-<div class="stat-card"><div class="lbl">이번 달</div><div class="val" id="thisMonth">-</div><div class="sub" id="monthTags">-</div></div>
+<div class="stat-card"><div class="lbl" style="display:flex;align-items:center;justify-content:space-between">이번 달<button type="button" id="thisMonthOpenBtn" class="checklist-link-btn" style="margin-left:0">사이트 열기 ↗</button></div><div class="val" id="thisMonth">-</div><div class="sub" id="monthTags">-</div></div>
 <div class="stat-card"><div class="lbl">다음 중요 알람</div><div class="val" id="nextAlarmMonth" style="font-size:18px">-</div><div class="sub" id="nextAlarmDesc">-</div></div>
 </div>
 
@@ -1198,7 +1198,7 @@ function loadStore(){
 
 const STORE = loadStore();
 let currentYear = STORE.meta.year || 2026;
-let selectedMonth = new Date().getMonth()+1;
+let selectedMonth = null;
 
 function changeYear(d){
   currentYear += d;
@@ -1372,6 +1372,15 @@ function initStats(){
   if(!d) return;
   document.getElementById('thisMonth').textContent = m+'월';
   document.getElementById('monthTags').textContent = d.tags.map(t=>t.t).join(' · ');
+  const openBtn = document.getElementById('thisMonthOpenBtn');
+  if(openBtn){
+    openBtn.addEventListener('click', ()=>{
+      selectedMonth = m;
+      renderCalendar();
+      renderDetail(m);
+      document.getElementById('weekList').scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  }
   let nextM = null, nextW = null;
   for(let i=0;i<12;i++){
     const nm = (m-1+i)%12+1;
@@ -1406,7 +1415,6 @@ renderBudget();
 renderVendors();
 renderServants();
 renderCalendar();
-if(STORE.months[selectedMonth]) renderDetail(selectedMonth);
 initStats();
 initTeamCards();
 </script>
