@@ -1342,9 +1342,7 @@ function initMonthPicker(){
   if(openBtn){
     openBtn.addEventListener('click', ()=>{
       const m = parseInt(sel.value, 10);
-      selectedMonth = m;
-      renderDetail(m);
-      document.getElementById('weekList').scrollIntoView({behavior:'smooth', block:'start'});
+      toggleDetail(m);
     });
   }
 }
@@ -1369,6 +1367,24 @@ function renderDetail(m){
   }).join('');
 }
 
+let detailOpenMonth = null;
+function closeDetail(){
+  document.getElementById('detailTitle').textContent = '월 상세 일정';
+  document.getElementById('detailSub').textContent = '위에서 달을 선택하고 사이트 열기를 눌러주세요';
+  document.getElementById('weekList').innerHTML = '<div style="text-align:center;padding:2.5rem;color:#aaa;font-size:13px">↑ 위에서 달을 선택하고 사이트 열기를 누르면 주차별 상세 일정이 표시됩니다</div>';
+  detailOpenMonth = null;
+}
+function toggleDetail(m){
+  if(detailOpenMonth === m){
+    closeDetail();
+  } else {
+    selectedMonth = m;
+    renderDetail(m);
+    detailOpenMonth = m;
+    document.getElementById('weekList').scrollIntoView({behavior:'smooth', block:'start'});
+  }
+}
+
 function initStats(){
   const m = new Date().getMonth()+1;
   const d = STORE.months[m];
@@ -1378,9 +1394,7 @@ function initStats(){
   const openBtn = document.getElementById('thisMonthOpenBtn');
   if(openBtn){
     openBtn.addEventListener('click', ()=>{
-      selectedMonth = m;
-      renderDetail(m);
-      document.getElementById('weekList').scrollIntoView({behavior:'smooth', block:'start'});
+      toggleDetail(m);
     });
   }
   let nextM = null, nextW = null;
