@@ -208,11 +208,6 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb}
 </div>
 
 <div class="panel" style="margin-bottom:20px">
-<div class="section-title">거래처 및 인수인계 필수 정보</div>
-<div class="info-grid" id="vendorGrid"></div>
-</div>
-
-<div class="panel" style="margin-bottom:20px">
 <div class="section-title">예배위원회 섬기는 분</div>
 <div class="info-grid" style="grid-template-columns:repeat(2,1fr)" id="servantGrid"></div>
 </div>
@@ -277,7 +272,16 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb}
     "linkUrl": "https://ch2ch.or.kr/Main_new2/Frame_Set.asp"
   },
   "checklist": [
-    "헌금위원 명단 확인 및 단체 카톡방 개설 (연초)",
+    {
+      "text": "헌금위원 명단 확인 및 단체 카톡방 개설 (연초)",
+      "vendor": {
+        "label": "헌금위원 7명 · 헌금주머니·가운 보관",
+        "name": "식당 자동출입문 왼편 붙박이장",
+        "sub": "위원장 1명 본당 4명 · 중3층 2명 · 예배 전 20분 전 도착",
+        "price": "2부 위원장: 사무실 맞은편 여전도회실·모퉁이돌 헌금바구니 전달",
+        "manualLink": true
+      }
+    },
     "헌금 가운 세탁 연간 2회 준비",
     "연간 예산 신청서 제출 (12월 공동의회 전)",
     {
@@ -312,15 +316,7 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb}
     "연말 재정 결산 정리 (12월)",
     "차기 위원장에게 대시보드 및 거래처 인수인계"
   ],
-  "vendors": [
-    {
-      "label": "헌금위원 7명 · 헌금주머니·가운 보관",
-      "name": "식당 자동출입문 왼편 붙박이장",
-      "sub": "위원장 1명 본당 4명 · 중3층 2명 · 예배 전 20분 전 도착",
-      "price": "2부 위원장: 사무실 맞은편 여전도회실·모퉁이돌 헌금바구니 전달",
-      "manualLink": true
-    }
-  ],
+  "vendors": [],
   "servants": [
     {
       "label": "위원장",
@@ -1270,6 +1266,7 @@ function renderChecklist(){
 <div class="info-name">${item.vendor.name}</div>
 <div class="info-sub">${item.vendor.sub}</div>
 <div class="info-price">${item.vendor.price}</div>
+${item.vendor.manualLink?`<a class="stat-manual-link" href="${STORE.meta.manualUrl}" target="_blank" rel="noopener">📄 메뉴얼 PDF 열기 ↗</a>`:''}
 </div>` : '';
     return `<div class="check-item" id="ci${i}">
 <label class="check-item-label"><input type="checkbox" onchange="markDone(${i})"><span>${text}</span></label>
@@ -1299,17 +1296,6 @@ function renderBudget(){
   document.getElementById('budgetWarn').style.display = b.warn ? '' : 'none';
   document.getElementById('budgetLink').href = b.linkUrl;
   document.getElementById('budgetLinkLabel').textContent = b.linkLabel;
-}
-
-function renderVendors(){
-  document.getElementById('vendorGrid').innerHTML = STORE.vendors.map(v=>`
-<div class="info-card">
-<div class="info-lbl">${v.label}</div>
-<div class="info-name">${v.name}</div>
-<div class="info-sub">${v.sub}</div>
-<div class="info-price">${v.price}</div>
-${v.manualLink?`<a class="stat-manual-link" href="${STORE.meta.manualUrl}" target="_blank" rel="noopener">📄 메뉴얼 PDF 열기 ↗</a>`:''}
-</div>`).join('');
 }
 
 function renderServants(){
@@ -1416,7 +1402,6 @@ function initTeamCards(){
 applyMeta();
 renderChecklist();
 renderBudget();
-renderVendors();
 renderServants();
 initStats();
 initMonthPicker();
