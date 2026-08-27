@@ -110,7 +110,7 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb}
 <body>
 <div class="header">
 <div class="header-left">
-<h1 id="siteTitle">📋 예배위원회 운영 대시보드</h1>
+<h1><span id="siteTitle">📋 예배위원회 운영 대시보드</span><img id="siteLogo" alt="교회 로고" style="height:22px;vertical-align:middle;margin-left:8px;display:none"></h1>
 <p id="siteSubtitle">서울중앙교회 — 누구나 이어서 운영할 수 있는 연간 시스템</p>
 </div>
 <div class="header-right">
@@ -187,7 +187,7 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb}
 <script type="application/json" id="defaultData">
 {
   "meta": {
-    "title": "📋 예배위원회 운영 대시보드",
+    "title": "서울중앙교회 예배위원회",
     "subtitle": "서울중앙교회 — 누구나 이어서 운영할 수 있는 연간 시스템",
     "year": 2026,
     "budgetTotal": "5,120만",
@@ -196,7 +196,8 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb}
     "committeeSub": "위원장 1명 본당 4명 · 중3층 2명",
     "footer": "서울중앙교회 예배위원회 운영 대시보드 · 최초 작성 2026년 · 매년 업데이트 권장",
     "manualLabel": "📄 주일 봉헌 안내 매뉴얼",
-    "manualUrl": "./주일_봉헌_안내_매뉴얼.pdf"
+    "manualUrl": "./주일_봉헌_안내_매뉴얼.pdf",
+    "logoUrl": "./logo.png"
   },
   "budget": {
     "asOf": "2026년 8월 기준",
@@ -1146,6 +1147,13 @@ function changeYear(d){
 function applyMeta(){
   document.getElementById('siteTitle').textContent = STORE.meta.title;
   document.getElementById('siteSubtitle').textContent = STORE.meta.subtitle;
+  const logoEl = document.getElementById('siteLogo');
+  if(STORE.meta.logoUrl){
+    logoEl.src = STORE.meta.logoUrl;
+    logoEl.style.display = 'inline';
+  }else{
+    logoEl.style.display = 'none';
+  }
   document.getElementById('yearDisplay').textContent = currentYear;
   document.getElementById('budgetTotalVal').textContent = STORE.meta.budgetTotal;
   document.getElementById('budgetSubVal').textContent = STORE.meta.budgetSub;
