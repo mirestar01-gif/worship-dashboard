@@ -238,7 +238,14 @@ select{font-family:inherit}
     "헌금위원 명단 확인 및 단체 카톡방 개설 (연초)",
     "헌금 가운 세탁 연간 2회 준비",
     "연간 예산 신청서 제출 (12월 공동의회 전)",
-    "고난주간 특새카드 발주 — 행사 4주 전",
+    {
+      "text": "고난주간 특새카드 발주 — 행사 4주 전",
+      "vendor": {
+        "name": "다올 (임영석 대표)",
+        "sub": "📞 010-3527-4685 / FAX 02-2265-0400",
+        "price": "A5 500장 기준 187,000원 (VAT 포함) — 농협 351-1329-3253-43 (다올)"
+      }
+    },
     "고난주간 현수막·배너 발주 — 행사 3주 전",
     "부활절 현수막 발주 — 행사 2주 전",
     "추수감사절 특새 준비 (11월 2주차)",
@@ -252,12 +259,6 @@ select{font-family:inherit}
       "name": "그리드룸 (박재준 대표)",
       "sub": "📞 010-3192-4610",
       "price": "현수막 1030×3200 → 59,000원 / 배너 600×1800 × 2개 → 100,000원 (배송 포함)"
-    },
-    {
-      "label": "특새카드 인쇄",
-      "name": "다올 (임영석 대표)",
-      "sub": "📞 010-3527-4685 / FAX 02-2265-0400",
-      "price": "A5 500장 기준 187,000원 (VAT 포함) — 농협 351-1329-3253-43 (다올)"
     },
     {
       "label": "헌금위원 7명 · 헌금주머니·가운 보관",
@@ -1255,14 +1256,17 @@ document.getElementById('addBudgetRow').addEventListener('click', ()=>{
 function renderChecklistEdit(){
   const box = document.getElementById('checklistEdit');
   box.innerHTML = '';
-  store.checklist.forEach((text, i)=>{
+  store.checklist.forEach((item, i)=>{
+    const isObj = item && typeof item === 'object';
     const row = document.createElement('div');
     row.className = 'item-card';
     row.style.paddingRight = '38px';
-    row.innerHTML = `<button class="del" data-i="${i}">✕</button><input type="text" style="width:100%;border:1px solid #ddd;border-radius:8px;padding:8px 10px;font-size:13px;background:#fff">`;
+    row.innerHTML = `<button class="del" data-i="${i}">✕</button><input type="text" style="width:100%;border:1px solid #ddd;border-radius:8px;padding:8px 10px;font-size:13px;background:#fff">${isObj?'<div style="font-size:11px;color:#999;margin-top:4px">🔗 연결된 업체 정보 있음 (다올) — 텍스트만 수정 가능</div>':''}`;
     const input = row.querySelector('input');
-    input.value = text;
-    input.addEventListener('input', ()=> store.checklist[i] = input.value);
+    input.value = isObj ? item.text : item;
+    input.addEventListener('input', ()=>{
+      if(isObj) item.text = input.value; else store.checklist[i] = input.value;
+    });
     row.querySelector('.del').addEventListener('click', ()=>{
       store.checklist.splice(i,1);
       renderChecklistEdit();

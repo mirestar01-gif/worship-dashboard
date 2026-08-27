@@ -69,9 +69,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
 .panel{background:#fff;border:1px solid #e8e7e3;border-radius:12px;padding:16px 18px}
 .checklist{display:flex;flex-direction:column;gap:7px;margin-top:8px}
-.check-item{display:flex;align-items:center;gap:8px;font-size:13px;color:#1a1a18;cursor:pointer}
+.check-item{display:flex;align-items:center;gap:8px;font-size:13px;color:#1a1a18}
+.check-item-label{display:flex;align-items:center;gap:8px;cursor:pointer;flex:1;min-width:0}
 .check-item input{accent-color:#2563eb;width:15px;height:15px;cursor:pointer;flex-shrink:0}
-.check-item.done span{text-decoration:line-through;color:#aaa}
+.check-item.done .check-item-label span{text-decoration:line-through;color:#aaa}
+.checklist-link-btn{margin-left:auto;flex-shrink:0;font-size:11px;color:#2563eb;background:#eff6ff;border:1px solid #dbeafe;border-radius:999px;padding:3px 10px;font-weight:600;cursor:pointer;white-space:nowrap}
+.checklist-link-btn:hover{background:#dbeafe}
+.checklist-vendor-info{display:none;margin-left:23px;padding:10px 12px;background:#fafaf9;border-radius:8px;border:1px solid #e8e7e3}
+.checklist-vendor-info.open{display:block}
+.checklist-vendor-info .info-lbl{font-size:10px;color:#888;margin-bottom:3px}
+.checklist-vendor-info .info-name{font-size:13px;font-weight:600;color:#1a1a18}
+.checklist-vendor-info .info-sub{font-size:11px;color:#666;margin-top:2px}
+.checklist-vendor-info .info-price{font-size:10px;color:#888;margin-top:3px}
 .budget-rows{display:flex;flex-direction:column;gap:8px;margin-top:8px}
 .budget-row{display:flex;align-items:center;gap:8px}
 .budget-name{font-size:12px;color:#555;min-width:90px}
@@ -278,7 +287,14 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb}
     "헌금위원 명단 확인 및 단체 카톡방 개설 (연초)",
     "헌금 가운 세탁 연간 2회 준비",
     "연간 예산 신청서 제출 (12월 공동의회 전)",
-    "고난주간 특새카드 발주 — 행사 4주 전",
+    {
+      "text": "고난주간 특새카드 발주 — 행사 4주 전",
+      "vendor": {
+        "name": "다올 (임영석 대표)",
+        "sub": "📞 010-3527-4685 / FAX 02-2265-0400",
+        "price": "A5 500장 기준 187,000원 (VAT 포함) — 농협 351-1329-3253-43 (다올)"
+      }
+    },
     "고난주간 현수막·배너 발주 — 행사 3주 전",
     "부활절 현수막 발주 — 행사 2주 전",
     "추수감사절 특새 준비 (11월 2주차)",
@@ -292,12 +308,6 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb}
       "name": "그리드룸 (박재준 대표)",
       "sub": "📞 010-3192-4610",
       "price": "현수막 1030×3200 → 59,000원 / 배너 600×1800 × 2개 → 100,000원 (배송 포함)"
-    },
-    {
-      "label": "특새카드 인쇄",
-      "name": "다올 (임영석 대표)",
-      "sub": "📞 010-3527-4685 / FAX 02-2265-0400",
-      "price": "A5 500장 기준 187,000원 (VAT 포함) — 농협 351-1329-3253-43 (다올)"
     },
     {
       "label": "헌금위원 7명 · 헌금주머니·가운 보관",
@@ -1247,8 +1257,31 @@ function markDone(i){
 
 function renderChecklist(){
   const box = document.getElementById('checklist');
-  box.innerHTML = STORE.checklist.map((text,i)=>`
-<label class="check-item" id="ci${i}"><input type="checkbox" onchange="markDone(${i})"><span>${text}</span></label>`).join('');
+  box.innerHTML = STORE.checklist.map((item,i)=>{
+    const isObj = item && typeof item === 'object';
+    const text = isObj ? item.text : item;
+    const btn = isObj ? `<button type="button" class="checklist-link-btn" data-idx="${i}">사이트 열기 ↗</button>` : '';
+    const vendorBox = isObj ? `<div class="checklist-vendor-info" id="cv${i}">
+<div class="info-lbl">특새카드인쇄</div>
+<div class="info-name">${item.vendor.name}</div>
+<div class="info-sub">${item.vendor.sub}</div>
+<div class="info-price">${item.vendor.price}</div>
+</div>` : '';
+    return `<div class="check-item" id="ci${i}">
+<label class="check-item-label"><input type="checkbox" onchange="markDone(${i})"><span>${text}</span></label>
+${btn}
+</div>${vendorBox}`;
+  }).join('');
+  initChecklistLinks();
+}
+
+function initChecklistLinks(){
+  document.querySelectorAll('.checklist-link-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const box = document.getElementById('cv'+btn.getAttribute('data-idx'));
+      if(box) box.classList.toggle('open');
+    });
+  });
 }
 
 function renderBudget(){
