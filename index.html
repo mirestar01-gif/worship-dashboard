@@ -170,7 +170,7 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb}
 <span id="detailSub">위에서 달을 선택하고 사이트 열기를 눌러주세요</span>
 </div>
 <div class="week-list" id="weekList">
-<div style="text-align:center;padding:2.5rem;color:#aaa;font-size:13px">↑ 위에서 달을 선택하고 사이트 열기를 누르면 주차별 상세 일정이 표시됩니다</div>
+<div style="text-align:center;padding:0.5rem 0;color:#aaa;font-size:12px">↑ 위에서 달을 선택하고 사이트 열기를 누르면 주차별 상세 일정이 표시됩니다</div>
 </div>
 </div>
 
@@ -1357,7 +1357,7 @@ let detailOpenMonth = null;
 function closeDetail(){
   document.getElementById('detailTitle').textContent = '월 상세 일정';
   document.getElementById('detailSub').textContent = '위에서 달을 선택하고 사이트 열기를 눌러주세요';
-  document.getElementById('weekList').innerHTML = '<div style="text-align:center;padding:2.5rem;color:#aaa;font-size:13px">↑ 위에서 달을 선택하고 사이트 열기를 누르면 주차별 상세 일정이 표시됩니다</div>';
+  document.getElementById('weekList').innerHTML = '<div style="text-align:center;padding:0.5rem 0;color:#aaa;font-size:12px">↑ 위에서 달을 선택하고 사이트 열기를 누르면 주차별 상세 일정이 표시됩니다</div>';
   detailOpenMonth = null;
 }
 function toggleDetail(m){
