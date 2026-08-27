@@ -75,8 +75,31 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
 .budget-name{font-size:12px;color:#555;min-width:90px}
 .budget-bar-wrap{flex:1;background:#f0efeb;border-radius:4px;height:7px;overflow:hidden}
 .budget-bar{height:100%;border-radius:4px;background:#2563eb;transition:width 0.6s ease}
+.budget-bar.warn{background:#f59e0b}
+.budget-bar.danger{background:#dc2626}
 .budget-pct{font-size:11px;color:#888;min-width:30px;text-align:right}
 .budget-warn{margin-top:10px;padding:8px 10px;background:#fef3c7;border-radius:8px;font-size:11px;color:#92400e}
+
+.stat-card.budget-card{grid-column:span 2;display:flex;flex-direction:column;gap:12px}
+.budget-card-head{display:flex;align-items:center;justify-content:space-between}
+.budget-pct-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:#eff6ff;color:#2563eb;white-space:nowrap}
+.budget-pct-badge.warn{background:#fef3c7;color:#92400e}
+.budget-pct-badge.danger{background:#fee2e2;color:#b91c1c}
+.budget-card-figures{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.budget-figure-lbl{font-size:10px;color:#aaa;margin-bottom:2px}
+.budget-figure-val{font-size:24px;font-weight:600;color:#1a1a18;font-variant-numeric:tabular-nums;line-height:1.15}
+.budget-figure-val.accent{color:#2563eb}
+.budget-figure.align-right{text-align:right}
+.budget-progress-wrap{background:#f0efeb;border-radius:6px;height:8px;overflow:hidden}
+.budget-progress-bar{height:100%;border-radius:6px;background:#2563eb;transition:width 0.6s ease;width:0%}
+.budget-progress-bar.warn{background:#f59e0b}
+.budget-progress-bar.danger{background:#dc2626}
+.budget-progress-labels{display:flex;justify-content:space-between;font-size:11px;color:#888;font-variant-numeric:tabular-nums}
+
+@media(max-width:420px){
+.budget-card-figures{gap:8px}
+.budget-figure-val{font-size:20px}
+}
 .info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px}
 .info-card{padding:10px 12px;background:#fafaf9;border-radius:8px;border:1px solid #e8e7e3}
 .info-lbl{font-size:10px;color:#888;margin-bottom:3px}
@@ -124,16 +147,24 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb}
 <div class="wrap">
 <div class="stats-row">
 <div class="stat-card"><div class="lbl">이번 달</div><div class="val" id="thisMonth">-</div><div class="sub" id="monthTags">-</div></div>
-<div class="stat-card" style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
-<div>
+<div class="stat-card budget-card">
+<div class="budget-card-head">
 <div class="lbl">연간 예산 (예배비)</div>
-<div class="val" id="budgetTotalVal">5,620만</div>
+<div class="budget-pct-badge" id="budgetPctBadge">-</div>
+</div>
+<div class="budget-card-figures">
+<div class="budget-figure">
+<div class="budget-figure-lbl">총예산</div>
+<div class="budget-figure-val" id="budgetTotalVal">5,120만</div>
 <div class="sub" id="budgetSubVal">2026년 신청 기준</div>
 </div>
-<div style="text-align:right">
-<div class="lbl">총잔액</div>
-<div class="val" id="budgetBalanceVal" style="font-size:17px;color:#2563eb;white-space:nowrap">-</div>
+<div class="budget-figure align-right">
+<div class="budget-figure-lbl">총잔액</div>
+<div class="budget-figure-val accent" id="budgetBalanceVal">-</div>
 </div>
+</div>
+<div class="budget-progress-wrap"><div class="budget-progress-bar" id="budgetProgressBar"></div></div>
+<div class="budget-progress-labels"><span id="budgetSpentLabel">-</span><span id="budgetPctLabel"></span></div>
 </div>
 <div class="stat-card"><div class="lbl">헌금위원</div><div class="val" id="committeeCountVal">7명</div><div class="sub" id="committeeSubVal">위원장 1명 본당 4명 · 중3층 2명</div></div>
 <div class="stat-card"><div class="lbl">다음 중요 알람</div><div class="val" id="nextAlarmMonth" style="font-size:18px">-</div><div class="sub" id="nextAlarmDesc">-</div></div>
@@ -192,7 +223,7 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb}
 
 </div>
 <footer>
-<img id="siteLogo" alt="교회 로고" style="height:24px;display:none;margin-bottom:8px">
+<img id="siteLogo" alt="교회 로고" style="height:48px;display:none;margin-bottom:8px">
 <div id="siteFooter">서울중앙교회 예배위원회 운영 대시보드 · 최초 작성 2026년 · 매년 업데이트 권장</div>
 </footer>
 
@@ -1157,6 +1188,45 @@ function changeYear(d){
   document.getElementById('yearDisplay').textContent = currentYear;
 }
 
+function parseAmountKRW(str){
+  if(!str) return null;
+  let s = String(str).replace(/,/g,'').replace(/원/g,'').trim();
+  let total = 0, matched = false;
+  const eok = s.match(/([\d.]+)\s*억/);
+  if(eok){ total += parseFloat(eok[1]) * 100000000; s = s.replace(eok[0],''); matched = true; }
+  const man = s.match(/([\d.]+)\s*만/);
+  if(man){ total += parseFloat(man[1]) * 10000; s = s.replace(man[0],''); matched = true; }
+  const rest = s.replace(/[^\d.]/g,'');
+  if(rest){ total += parseFloat(rest); matched = true; }
+  return matched ? total : null;
+}
+
+function updateBudgetProgress(totalStr, balanceStr){
+  const badge = document.getElementById('budgetPctBadge');
+  const bar = document.getElementById('budgetProgressBar');
+  const spentLbl = document.getElementById('budgetSpentLabel');
+  const pctLbl = document.getElementById('budgetPctLabel');
+  const total = parseAmountKRW(totalStr);
+  const balance = parseAmountKRW(balanceStr);
+  badge.classList.remove('warn','danger');
+  bar.classList.remove('warn','danger');
+  if(total===null || balance===null || total<=0){
+    badge.textContent = '-';
+    bar.style.width = '0%';
+    spentLbl.textContent = '집행 현황 미입력';
+    pctLbl.textContent = '';
+    return;
+  }
+  const spent = Math.max(0, total - balance);
+  const pct = Math.min(100, Math.round(spent/total*100));
+  badge.textContent = '집행률 '+pct+'%';
+  bar.style.width = pct+'%';
+  if(pct>=85){ bar.classList.add('danger'); badge.classList.add('danger'); }
+  else if(pct>=60){ bar.classList.add('warn'); badge.classList.add('warn'); }
+  spentLbl.textContent = '집행 '+Math.round(spent).toLocaleString('ko-KR')+'원';
+  pctLbl.textContent = pct+'% 사용';
+}
+
 function applyMeta(){
   document.getElementById('siteTitle').textContent = STORE.meta.title;
   const logoEl = document.getElementById('siteLogo');
@@ -1170,6 +1240,7 @@ function applyMeta(){
   document.getElementById('budgetTotalVal').textContent = STORE.meta.budgetTotal;
   document.getElementById('budgetSubVal').textContent = STORE.meta.budgetSub;
   document.getElementById('budgetBalanceVal').textContent = STORE.meta.budgetBalance || '-';
+  updateBudgetProgress(STORE.meta.budgetTotal, STORE.meta.budgetBalance);
   document.getElementById('committeeCountVal').textContent = STORE.meta.committeeCount;
   document.getElementById('committeeSubVal').textContent = STORE.meta.committeeSub;
   document.getElementById('siteFooter').textContent = STORE.meta.footer;
@@ -1191,8 +1262,10 @@ function renderChecklist(){
 function renderBudget(){
   const b = STORE.budget;
   document.getElementById('budgetAsOf').textContent = '예산 집행 현황 ('+b.asOf+')';
-  document.getElementById('budgetRows').innerHTML = b.rows.map(r=>`
-<div class="budget-row"><span class="budget-name">${r.name}</span><div class="budget-bar-wrap"><div class="budget-bar" style="width:${r.pct}%"></div></div><span class="budget-pct">${r.pct}%</span></div>`).join('');
+  document.getElementById('budgetRows').innerHTML = b.rows.map(r=>{
+    const cls = r.pct>=85 ? 'danger' : (r.pct>=60 ? 'warn' : '');
+    return `<div class="budget-row"><span class="budget-name">${r.name}</span><div class="budget-bar-wrap"><div class="budget-bar ${cls}" style="width:${r.pct}%"></div></div><span class="budget-pct">${r.pct}%</span></div>`;
+  }).join('');
   document.getElementById('budgetWarn').textContent = b.warn;
   document.getElementById('budgetWarn').style.display = b.warn ? '' : 'none';
   document.getElementById('budgetLink').href = b.linkUrl;
