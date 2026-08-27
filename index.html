@@ -26,7 +26,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
 .settings-link{font-size:12px;color:#888;text-decoration:none;border:1px solid #ddd;border-radius:8px;padding:5px 12px;transition:background 0.1s}
 .settings-link:hover{background:#f0efeb;color:#555}
 .wrap{max-width:1100px;margin:0 auto;padding:20px 16px}
-.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.stats-row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px}
 .stat-card{background:#fff;border-radius:12px;padding:14px 16px;border:1px solid #e8e7e3}
 .stat-card .lbl{font-size:11px;color:#888;margin-bottom:4px}
 .stat-card .val{font-size:24px;font-weight:600;color:#1a1a18}
@@ -152,7 +152,6 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb}
 <div class="wrap">
 <div class="stats-row">
 <div class="stat-card"><div class="lbl">이번 달</div><div class="val" id="thisMonth">-</div><div class="sub" id="monthTags">-</div></div>
-<div class="stat-card"><div class="lbl">헌금위원</div><div class="val" id="committeeCountVal">7명</div><div class="sub" id="committeeSubVal">위원장 1명 본당 4명 · 중3층 2명</div></div>
 <div class="stat-card"><div class="lbl">다음 중요 알람</div><div class="val" id="nextAlarmMonth" style="font-size:18px">-</div><div class="sub" id="nextAlarmDesc">-</div></div>
 </div>
 
@@ -301,9 +300,9 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb}
       "price": "A5 500장 기준 187,000원 (VAT 포함) — 농협 351-1329-3253-43 (다올)"
     },
     {
-      "label": "헌금주머니·가운 보관",
+      "label": "헌금위원 7명 · 헌금주머니·가운 보관",
       "name": "식당 자동출입문 왼편 붙박이장",
-      "sub": "예배 전 20분 전 도착 · 본당 4명 + 중3층 2명",
+      "sub": "위원장 1명 본당 4명 · 중3층 2명 · 예배 전 20분 전 도착",
       "price": "2부 위원장: 사무실 맞은편 여전도회실·모퉁이돌 헌금바구니 전달",
       "manualLink": true
     }
@@ -1238,8 +1237,6 @@ function applyMeta(){
   document.getElementById('budgetSubVal').textContent = STORE.meta.budgetSub;
   document.getElementById('budgetBalanceVal').textContent = STORE.meta.budgetBalance || '-';
   updateBudgetProgress(STORE.meta.budgetTotal, STORE.meta.budgetBalance);
-  document.getElementById('committeeCountVal').textContent = STORE.meta.committeeCount;
-  document.getElementById('committeeSubVal').textContent = STORE.meta.committeeSub;
   document.getElementById('siteFooter').textContent = STORE.meta.footer;
 }
 
