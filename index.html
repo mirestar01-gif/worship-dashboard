@@ -18,10 +18,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
 .header{background:#fff;border-bottom:1px solid #e5e4e0;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
 .header-left h1{font-size:18px;font-weight:600;color:#1a1a18}
 .header-left p{font-size:12px;color:#888;margin-top:2px}
+.header-right{display:flex;align-items:center;gap:14px}
 .year-nav{display:flex;align-items:center;gap:8px}
 .year-nav button{background:none;border:1px solid #ddd;border-radius:8px;padding:5px 12px;font-size:13px;cursor:pointer;color:#333;transition:background 0.1s}
 .year-nav button:hover{background:#f0efeb}
 .year-display{font-size:16px;font-weight:600;min-width:52px;text-align:center}
+.settings-link{font-size:12px;color:#888;text-decoration:none;border:1px solid #ddd;border-radius:8px;padding:5px 12px;transition:background 0.1s}
+.settings-link:hover{background:#f0efeb;color:#555}
 .wrap{max-width:1100px;margin:0 auto;padding:20px 16px}
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
 .stat-card{background:#fff;border-radius:12px;padding:14px 16px;border:1px solid #e8e7e3}
@@ -107,20 +110,23 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb}
 <body>
 <div class="header">
 <div class="header-left">
-<h1>📋 예배위원회 운영 대시보드</h1>
-<p>서울중앙교회 — 누구나 이어서 운영할 수 있는 연간 시스템</p>
+<h1 id="siteTitle">📋 예배위원회 운영 대시보드</h1>
+<p id="siteSubtitle">서울중앙교회 — 누구나 이어서 운영할 수 있는 연간 시스템</p>
 </div>
+<div class="header-right">
 <div class="year-nav">
 <button onclick="changeYear(-1)">‹ 이전</button>
 <span class="year-display" id="yearDisplay">2026</span>
 <button onclick="changeYear(1)">다음 ›</button>
 </div>
+<a class="settings-link" href="./settings.html">⚙ 관리 설정</a>
+</div>
 </div>
 <div class="wrap">
 <div class="stats-row">
 <div class="stat-card"><div class="lbl">이번 달</div><div class="val" id="thisMonth">-</div><div class="sub" id="monthTags">-</div></div>
-<div class="stat-card"><div class="lbl">연간 예산 (예배비)</div><div class="val">5,620만</div><div class="sub">2026년 신청 기준</div></div>
-<div class="stat-card"><div class="lbl">헌금위원</div><div class="val">7명</div><div class="sub">위원장 1명 본당 4명 · 중3층 2명</div></div>
+<div class="stat-card"><div class="lbl">연간 예산 (예배비)</div><div class="val" id="budgetTotalVal">5,620만</div><div class="sub" id="budgetSubVal">2026년 신청 기준</div></div>
+<div class="stat-card"><div class="lbl">헌금위원</div><div class="val" id="committeeCountVal">7명</div><div class="sub" id="committeeSubVal">위원장 1명 본당 4명 · 중3층 2명</div></div>
 <div class="stat-card"><div class="lbl">다음 중요 알람</div><div class="val" id="nextAlarmMonth" style="font-size:18px">-</div><div class="sub" id="nextAlarmDesc">-</div></div>
 </div>
 
@@ -144,34 +150,14 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb}
 <div class="two-col">
 <div class="panel">
 <div class="section-title">위원장 연간 체크리스트</div>
-<div class="checklist" id="checklist">
-<label class="check-item" id="ci0"><input type="checkbox" onchange="markDone(0)"><span>헌금위원 명단 확인 및 단체 카톡방 개설 (연초)</span></label>
-<label class="check-item" id="ci1"><input type="checkbox" onchange="markDone(1)"><span>헌금 주머니·가운 보관 위치 확인</span></label>
-<label class="check-item" id="ci2"><input type="checkbox" onchange="markDone(2)"><span>연간 예산 신청서 제출 (12월 공동의회 전)</span></label>
-<label class="check-item" id="ci3"><input type="checkbox" onchange="markDone(3)"><span>고난주간 특새카드 발주 — 행사 4주 전</span></label>
-<label class="check-item" id="ci4"><input type="checkbox" onchange="markDone(4)"><span>고난주간 현수막·배너 발주 — 행사 3주 전</span></label>
-<label class="check-item" id="ci5"><input type="checkbox" onchange="markDone(5)"><span>부활절 현수막 발주 — 행사 2주 전</span></label>
-<label class="check-item" id="ci6"><input type="checkbox" onchange="markDone(6)"><span>추수감사절 특새 준비 (11월 2주차)</span></label>
-<label class="check-item" id="ci7"><input type="checkbox" onchange="markDone(7)"><span>제직회 추경 보고 자료 준비</span></label>
-<label class="check-item" id="ci8"><input type="checkbox" onchange="markDone(8)"><span>연말 재정 결산 정리 (12월)</span></label>
-<label class="check-item" id="ci9"><input type="checkbox" onchange="markDone(9)"><span>차기 위원장에게 대시보드 및 거래처 인수인계</span></label>
-</div>
+<div class="checklist" id="checklist"></div>
 </div>
 <div class="panel">
-<div class="section-title">예산 집행 현황 (2025년 9월 기준)</div>
-<div class="budget-rows">
-<div class="budget-row"><span class="budget-name">성례비</span><div class="budget-bar-wrap"><div class="budget-bar" style="width:39%"></div></div><span class="budget-pct">39%</span></div>
-<div class="budget-row"><span class="budget-name">설교예대</span><div class="budget-bar-wrap"><div class="budget-bar" style="width:77%"></div></div><span class="budget-pct">77%</span></div>
-<div class="budget-row"><span class="budget-name">찬양대 사례</span><div class="budget-bar-wrap"><div class="budget-bar" style="width:75%"></div></div><span class="budget-pct">75%</span></div>
-<div class="budget-row"><span class="budget-name">찬양대 운영</span><div class="budget-bar-wrap"><div class="budget-bar" style="width:66%"></div></div><span class="budget-pct">66%</span></div>
-<div class="budget-row"><span class="budget-name">유아돌봄팀</span><div class="budget-bar-wrap"><div class="budget-bar" style="width:75%"></div></div><span class="budget-pct">75%</span></div>
-<div class="budget-row"><span class="budget-name">예배준비비</span><div class="budget-bar-wrap"><div class="budget-bar" style="width:57%"></div></div><span class="budget-pct">57%</span></div>
-<div class="budget-row"><span class="budget-name">예배음악팀</span><div class="budget-bar-wrap"><div class="budget-bar" style="width:0%"></div></div><span class="budget-pct">0%</span></div>
-<div class="budget-row"><span class="budget-name">찬양예배비</span><div class="budget-bar-wrap"><div class="budget-bar" style="width:0%"></div></div><span class="budget-pct">0%</span></div>
-</div>
-<div class="budget-warn">⚠ 예배음악팀·찬양예배비 미집행 — 하반기 사용 계획 확인 필요</div>
-<a href="https://ch2ch.or.kr/Main_new2/Frame_Set.asp" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;margin-top:8px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;color:#1d4ed8;text-decoration:none;font-size:14px;font-weight:600">
-<span>📊 위원회재정통계 (웹교회관리)</span>
+<div class="section-title" id="budgetAsOf">예산 집행 현황</div>
+<div class="budget-rows" id="budgetRows"></div>
+<div class="budget-warn" id="budgetWarn"></div>
+<a id="budgetLink" href="#" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;margin-top:8px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;color:#1d4ed8;text-decoration:none;font-size:14px;font-weight:600">
+<span id="budgetLinkLabel">📊 위원회재정통계 (웹교회관리)</span>
 <span style="font-size:12px;font-weight:500;color:#2563eb">사이트 열기 ↗</span>
 </a>
 </div>
@@ -179,224 +165,981 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb}
 
 <div class="panel" style="margin-bottom:20px">
 <div class="section-title">거래처 및 인수인계 필수 정보</div>
-<div class="info-grid">
-<div class="info-card">
-<div class="info-lbl">현수막·배너 제작</div>
-<div class="info-name">그리드룸 (박재준 대표)</div>
-<div class="info-sub">📞 010-3192-4610</div>
-<div class="info-price">현수막 1030×3200 → 59,000원 / 배너 600×1800 × 2개 → 100,000원 (배송 포함)</div>
-</div>
-<div class="info-card">
-<div class="info-lbl">특새카드 인쇄</div>
-<div class="info-name">다올 (임영석 대표)</div>
-<div class="info-sub">📞 010-3527-4685 / FAX 02-2265-0400</div>
-<div class="info-price">A5 500장 기준 187,000원 (VAT 포함) — 농협 351-1329-3253-43 (다올)</div>
-</div>
-<div class="info-card">
-<div class="info-lbl">헌금주머니·가운 보관</div>
-<div class="info-name">식당 자동출입문 왼편 붙박이장</div>
-<div class="info-sub">예배 전 20분 전 도착 · 본당 4명 + 중3층 2명</div>
-<div class="info-price">2부 위원장: 사무실 맞은편 여전도회실·모퉁이돌 헌금바구니 전달</div>
-</div>
-</div>
+<div class="info-grid" id="vendorGrid"></div>
 </div>
 
 <div class="panel" style="margin-bottom:20px">
 <div class="section-title">예배위원회 섬기는 분</div>
-<div class="info-grid" style="grid-template-columns:repeat(2,1fr)">
-<div class="info-card">
-<div class="info-lbl">위원장</div>
-<div class="info-name">이충열 장로</div>
-</div>
-<div class="info-card">
-<div class="info-lbl">부위원장</div>
-<div class="info-name">조신혜 권사 · 권기용 집사</div>
-</div>
-<div class="info-card clickable" data-team="ebenezer">
-<div class="info-lbl">에벤에셀찬양대 <span class="expand-arrow">▶</span></div>
-<div class="info-name">박선효 집사</div>
-<div class="team-members"></div>
-</div>
-<div class="info-card clickable" data-team="zion">
-<div class="info-lbl">시온찬양대 <span class="expand-arrow">▶</span></div>
-<div class="info-name">노성원 집사</div>
-<div class="team-members"></div>
-</div>
-<div class="info-card clickable" data-team="praiseteam">
-<div class="info-lbl">찬양팀 <span class="expand-arrow">▶</span></div>
-<div class="info-name">진성원 집사</div>
-<div class="team-members"></div>
-</div>
-<div class="info-card clickable" data-team="guide">
-<div class="info-lbl">예배안내팀 <span class="expand-arrow">▶</span></div>
-<div class="info-name">제민양 집사</div>
-<div class="team-members"></div>
-</div>
-<div class="info-card">
-<div class="info-lbl">성례준비팀</div>
-<div class="info-name">이순옥 권사</div>
-</div>
-<div class="info-card">
-<div class="info-lbl">기도팀</div>
-<div class="info-name">임지언 권사</div>
-</div>
-<div class="info-card clickable" data-team="nursery">
-<div class="info-lbl">유아돌봄팀 <span class="expand-arrow">▶</span></div>
-<div class="info-name">오주연 집사</div>
-<div class="team-members"></div>
-</div>
-<div class="info-card">
-<div class="info-lbl">예배음악팀</div>
-<div class="info-name">조은숙 권사</div>
-</div>
-</div>
+<div class="info-grid" style="grid-template-columns:repeat(2,1fr)" id="servantGrid"></div>
 </div>
 
 <div class="panel" style="margin-bottom:20px">
 <div class="section-title">봉헌 진행 순서 (매주 반복)</div>
-<a href="./주일_봉헌_안내_매뉴얼.pdf" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;margin-top:8px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;color:#1d4ed8;text-decoration:none;font-size:14px;font-weight:600">
-<span>📄 주일 봉헌 안내 매뉴얼</span>
+<a id="manualLink" href="./주일_봉헌_안내_매뉴얼.pdf" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;margin-top:8px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;color:#1d4ed8;text-decoration:none;font-size:14px;font-weight:600">
+<span id="manualLinkLabel">📄 주일 봉헌 안내 매뉴얼</span>
 <span style="font-size:12px;font-weight:500;color:#2563eb">PDF 열기 ↗</span>
 </a>
 </div>
 
 </div>
-<footer>서울중앙교회 예배위원회 운영 대시보드 · 최초 작성 2026년 · 매년 업데이트 권장</footer>
+<footer id="siteFooter">서울중앙교회 예배위원회 운영 대시보드 · 최초 작성 2026년 · 매년 업데이트 권장</footer>
 
-<script>
-const DATA = {
-1:{label:"1월",tags:[{t:"제직회",c:"t-blue"},{t:"예산",c:"t-green"}],major:false,weeks:[
-{w:"1주 (1/4)",title:"정기제직회·제직임명·성례식",desc:"신년예배(1일) 후 첫 제직회. 신임 위원 임명 및 성례식 진행.",badges:[{l:"필수",c:"b-red"},{l:"성례",c:"b-blue"}],alarm:true},
-{w:"2주 (1/11)",title:"지회월례회·전반기 학습 및 세례교육 시작",desc:"새가족등록, 피택자 교육①② 시작.",badges:[{l:"교육",c:"b-blue"}],alarm:false},
-{w:"3주 (1/18)",title:"전반기 직분자 수련회·유아세례교육 시작①",desc:"비전위원회 및 교역자 주관.",badges:[],alarm:false},
-{w:"4주 (1/25)",title:"제직회임원회·정기당회",desc:"피택자 교육⑤ 병행. 사순절 준비 점검 시작 권장.",badges:[{l:"당회",c:"b-amber"}],alarm:false}
-]},
-2:{label:"2월",tags:[{t:"사순절",c:"t-red"},{t:"설연휴",c:"t-amber"}],major:true,weeks:[
-{w:"1주 (2/1)",title:"정기제직회·장학증서 수여식·피택자 교육④",desc:"장학위원회 주관.",badges:[{l:"장학",c:"b-blue"}],alarm:false},
-{w:"2주 (2/8)",title:"지회월례회·전반기 장학증서 수여식",desc:"섬김이 세미나 병행 (소그룹위원회).",badges:[],alarm:false},
-{w:"3주 (2/15)",title:"설 연휴·전반기 말씀사경회 (2/20-22)",desc:"비전위원회 주관. 설 연휴(2/16-18) 이후 바로 사경회.",badges:[{l:"사경회",c:"b-blue"}],alarm:true},
-{w:"4주 (2/22)",title:"사순절 첫째 주일·결산공동의회·정기당회",desc:"니케아 신경 사용 시작(2/22-4/5). 제직회임원회 병행. 결산 공동의회 필수.",badges:[{l:"결산",c:"b-red"},{l:"당회",c:"b-amber"}],alarm:true}
-]},
-3:{label:"3월",tags:[{t:"고난주간준비",c:"t-red"},{t:"종려주일",c:"t-red"}],major:true,weeks:[
-{w:"1주 (3/1)",title:"장년교육 전반기 개강·정기제직회",desc:"장년교육위원회, 피택자 교육⑤.",badges:[{l:"개강",c:"b-blue"}],alarm:false},
-{w:"2주 (3/8)",title:"지회월례회·피택자 교육⑤",desc:"당회 주관.",badges:[],alarm:false},
-{w:"3주 (3/15)",title:"피택자 수련회 (3/20-21)⑥",desc:"특새카드 발주 마감 (행사 4주 전 = 이번 주). 배너·현수막 발주도 이번 주 이내.",badges:[{l:"카드발주",c:"b-red"},{l:"현수막발주",c:"b-red"}],alarm:true},
-{w:"5주 (3/29)",title:"종려주일·제직회임원회·정기당회",desc:"고난주간 특별새벽기도회 (3/30-4/4) 최종 점검. 배너·현수막 설치 확인.",badges:[{l:"고난주간 D-1",c:"b-red"}],alarm:true}
-]},
-4:{label:"4월",tags:[{t:"고난주간",c:"t-red"},{t:"부활절",c:"t-red"}],major:true,weeks:[
-{w:"고난주간 (3/30-4/4)",title:"고난주간 특별새벽기도회",desc:"테마: 십자가의 길, 믿음의 길. 특새카드 배포, 현수막(1030×3200) + 배너(600×1800×2개) 설치. 매일 새벽 진행.",badges:[{l:"핵심행사",c:"b-red"},{l:"배너설치",c:"b-amber"},{l:"카드배포",c:"b-amber"}],alarm:true},
-{w:"1주 (4/5)",title:"부활주일·성례식·정기제직회",desc:"부활절 현수막 설치 (그리드룸, 59,000원). 성례식 진행.",badges:[{l:"부활절",c:"b-red"},{l:"성례",c:"b-blue"}],alarm:true},
-{w:"2주 (4/12)",title:"지회월례회·피택자 교육⑦",desc:"서울중부 정기노회(4/13).",badges:[],alarm:false},
-{w:"3-4주",title:"유아세례교육②·피택자 교육⑧·제직회임원회·정기당회",desc:"당회 정기 진행.",badges:[{l:"당회",c:"b-amber"}],alarm:false}
-]},
-5:{label:"5월",tags:[{t:"어린이주일",c:"t-blue"},{t:"어버이주일",c:"t-blue"}],major:false,weeks:[
-{w:"1주 (5/3)",title:"어린이주일·정기제직회·피택자 교육⑨",desc:"교육위원회·제직회·당회 공동 진행.",badges:[{l:"어린이주일",c:"b-blue"}],alarm:false},
-{w:"2주 (5/10)",title:"어버이주일·지회월례회·새가족등록",desc:"시니어수련회 병행 (시니어위원회).",badges:[{l:"어버이주일",c:"b-green"}],alarm:false},
-{w:"3주 (5/17)",title:"스승의 주일·피택자 교육⑩",desc:"교육위원회·당회 주관.",badges:[],alarm:false},
-{w:"4-5주",title:"성령강림주일 (5/24)·제직회임원회·정기당회 (5/31)",desc:"당회 정기 진행.",badges:[{l:"성령강림",c:"b-blue"}],alarm:false}
-]},
-6:{label:"6월",tags:[{t:"세례·성례",c:"t-blue"},{t:"세이레기도회",c:"t-green"}],major:false,weeks:[
-{w:"1주 (6/7)",title:"정기제직회·피택자 교육⑪",desc:"제직회, 당회 주관.",badges:[],alarm:false},
-{w:"2주 (6/14)",title:"지회월례회",desc:"각 지회 주관.",badges:[],alarm:false},
-{w:"3주 (6/21)",title:"세이레기도회 시작 (6/15-7/5)",desc:"교육위원회 주관.",badges:[{l:"기도회",c:"b-blue"}],alarm:true},
-{w:"4주 (6/28)",title:"성례식(학습·입교·세례)·제직회임원회·정기당회",desc:"영아부 성경학교(6/4-5), 세례 특별새벽기도회(6/29-7/4).",badges:[{l:"성례",c:"b-red"},{l:"특새",c:"b-red"}],alarm:true}
-]},
-7:{label:"7월",tags:[{t:"맥추감사",c:"t-green"},{t:"여름수련회",c:"t-blue"}],major:false,weeks:[
-{w:"1주 (7/5)",title:"맥추감사주일·성례식·정기제직회",desc:"후반기 학습·세례교육 시작, 피택자 교육⑬.",badges:[{l:"맥추감사",c:"b-green"},{l:"성례",c:"b-blue"}],alarm:true},
-{w:"2주 (7/12)",title:"지회월례회·유치부 성경학교 (7/12-13)",desc:"유치부 주관.",badges:[{l:"성경학교",c:"b-blue"}],alarm:false},
-{w:"3주 (7/19)",title:"유아세례교육 시작③",desc:"교역자 주관.",badges:[],alarm:false},
-{w:"4주 (7/26)",title:"제직회임원회·정기당회",desc:"그루터기 하기봉사(7/29-8/2), 중고등부 여름수련회(7/30-8/2), 초등부 여름성경학교(7/31-8/2).",badges:[{l:"여름수련회",c:"b-amber"}],alarm:false}
-]},
-8:{label:"8월",tags:[{t:"수련회",c:"t-blue"}],major:false,weeks:[
-{w:"1주 (8/2)",title:"정기제직회·후반기 장학증서 수여식·피택자 교육⑭",desc:"그루터기 수련회(8/3-5).",badges:[{l:"장학",c:"b-blue"}],alarm:false},
-{w:"2주 (8/9)",title:"지회월례회·여름사역 보고회",desc:"교육/청년위원회 주관.",badges:[],alarm:false},
-{w:"3-4주 (8/16, 8/23)",title:"정비 및 하반기 준비",desc:"별도 일정 없음. 하반기 말씀사경회·추수감사 준비 시작 권장.",badges:[],alarm:false},
-{w:"5주 (8/30)",title:"제직회임원회·정기당회",desc:"섬김이 수련회(9/5) 준비.",badges:[{l:"섬김이",c:"b-amber"}],alarm:false}
-]},
-9:{label:"9월",tags:[{t:"추수감사준비",c:"t-amber"},{t:"추석",c:"t-amber"}],major:false,weeks:[
-{w:"1주 (9/6)",title:"정기제직회·장년교육 후반기 개강",desc:"후반기 말씀사경회 (9/11-13, 비전위원회).",badges:[{l:"개강",c:"b-blue"},{l:"사경회",c:"b-blue"}],alarm:true},
-{w:"2주 (9/13)",title:"지회월례회·피택자 교육(종합시험)⑮",desc:"총회주간(9/15-18).",badges:[{l:"총회",c:"b-amber"}],alarm:false},
-{w:"3주 (9/20)",title:"피택자 교육·추석 연휴 (9/24-26)",desc:"청년부 일본단기선교(9/24-28).",badges:[{l:"추석",c:"b-amber"}],alarm:false},
-{w:"4주 (9/27)",title:"제직회임원회·정기당회",desc:"10월 준비 점검.",badges:[{l:"당회",c:"b-amber"}],alarm:false}
-]},
-10:{label:"10월",tags:[{t:"종교개혁",c:"t-green"},{t:"수련회",c:"t-blue"}],major:false,weeks:[
-{w:"1주 (10/4)",title:"정기제직회·유아세례교육 시작④",desc:"청년부 수련회(10/8-11).",badges:[],alarm:false},
-{w:"2주 (10/11)",title:"지회월례회",desc:"서울중부 정기노회(10/12).",badges:[],alarm:false},
-{w:"3주 (10/18)",title:"후반기 직분자 수련회",desc:"각 지회 주관.",badges:[],alarm:false},
-{w:"4주 (10/25)",title:"종교개혁기념주일·제직회임원회·정기당회",desc:"당회 주관.",badges:[{l:"종교개혁",c:"b-green"}],alarm:false}
-]},
-11:{label:"11월",tags:[{t:"추수감사",c:"t-green"},{t:"대림절",c:"t-blue"}],major:true,weeks:[
-{w:"1주 (11/1)",title:"정기제직회·중앙청년아카데미",desc:"제직회, 당회 주관.",badges:[],alarm:false},
-{w:"2주 (11/8)",title:"지회월례회·새가족등록",desc:"추수감사절 특별새벽기도회(11/9-14) 사전 준비 완료 필요.",badges:[{l:"특새 준비",c:"b-amber"}],alarm:true},
-{w:"3주 (11/15)",title:"추수감사주일·성례식(성찬·학습·입교·세례)",desc:"소그룹위원회, 당회 주관. 교역자 겨울수련회(11/16-19).",badges:[{l:"추수감사",c:"b-green"},{l:"성례",c:"b-blue"}],alarm:true},
-{w:"4-5주 (11/22-29)",title:"대림절 첫째 주일 (11/29)·제직회임원회·정기당회",desc:"니케아 신경 사용(11/29-12/27).",badges:[{l:"대림절",c:"b-blue"}],alarm:false}
-]},
-12:{label:"12월",tags:[{t:"성탄",c:"t-red"},{t:"예산심의",c:"t-red"}],major:true,weeks:[
-{w:"1주 (12/6)",title:"정기제직회",desc:"2027년 달력 배포.",badges:[],alarm:false},
-{w:"2주 (12/13)",title:"예산심의 공동의회·지회월례회",desc:"당회 주관. 내년도 예산 의결 — 반드시 예산신청서 사전 준비.",badges:[{l:"예산심의",c:"b-red"},{l:"필수",c:"b-red"}],alarm:true},
-{w:"3주 (12/20)",title:"은퇴식·초등부 성탄모임·성탄절 예배 (12/25)",desc:"당회/행정위원회·초등부 / 중고등부 작은음악회(12/26).",badges:[{l:"성탄",c:"b-green"},{l:"은퇴식",c:"b-blue"}],alarm:true},
-{w:"4주 (12/27)",title:"교회학교 졸업식·제직회임원회·정기당회",desc:"교육위원회 주관. 신년예배(1/1) 준비 및 연말 결산 마감. 차기 위원장에게 인수인계.",badges:[{l:"졸업식",c:"b-blue"},{l:"결산",c:"b-red"},{l:"인수인계",c:"b-amber"}],alarm:true}
-]}
-};
-
-// 팀별 명단 데이터 (2026년도 예배위원회 명단 문서 기준)
-const TEAMS = {
-ebenezer:{
-  name:"에벤에셀찬양대 (1부)",
-  lines:[
-    "<b>대장</b> : 박선효",
-    "<b>지휘</b> : 김채영 · <b>피아노</b> : 노영은 · <b>오르간</b> : 이세라",
-    "<b>소프라노</b> : 강우진, 김현선, 이선희, 이예영, 이하윤, 이혜경, 정언약, 조하은, 최가원, 최현실, 박찬미, 조상욱",
-    "<b>알토</b> : 김예진, 박서연, 유미현, 이정미, 최다혜, 한지윤",
-    "<b>테너</b> : 강희광, 김상민, 김재훈, 김종욱, 나창현, 박은혁, 이세린, 최성욱, 최대성",
-    "<b>베이스</b> : 김성민, 김제원, 박선효, 백성광, 강신규, 진재형",
-    "<b>서리집사</b> : 강우진, 김현선, 이혜경, 최현실, 조상욱, 한지윤, 강희광, 백성광, 강신규, 진재형"
-  ]
-},
-zion:{
-  name:"시온찬양대 (2부)",
-  lines:[
-    "<b>대장</b> : 노성원",
-    "<b>지휘</b> : 조은숙 · <b>피아노</b> : 권보경 · <b>오르간</b> : 이은영",
-    "<b>소프라노</b> : 김수진, 박원진, 박찬양, 서진선, 어광희, 어지희, 오정희, 윤지희, 이종희, 최세라",
-    "<b>알토</b> : 김미정, 김영경, 김지은, 오노타에, 오영선, 유지영, 이은주, 이현주, 황영미, 백지은",
-    "<b>테너</b> : 권석범, 김병렬, 김진후, 박신호, 박용하, 배태정, 송경선, 오준묵, 최영철, 강신구",
-    "<b>베이스</b> : 김홍민, 노성원, 우정인, 이세영, 이희인",
-    "<b>서리집사</b> : 김수진, 박원진, 서진선, 어광희, 어지희, 오정희, 윤지희, 이종희, 최세라, 김미정, 김영경, 오노타에, 오영선, 이현주, 황영미, 백지은, 김병렬, 김진후, 박신호, 박용하, 오준묵, 최영철, 강신구, 이세영"
-  ]
-},
-guide:{
-  name:"예배안내팀",
-  lines:[
-    "<b>팀장</b> : 제민양",
-    "<b>1부</b> : 김예진, 김은종, 이하은, 송재준",
-    "<b>2부</b> : 김미경, 김재희, 박미옥, 조신혜, 이환수",
-    "<b>청년부</b> (매달 2명씩 순환) : 여창훈, 윤태홍, 이준일, 김수빈, 김란희, 유나정, 임솔, 한명은"
-  ]
-},
-nursery:{
-  name:"유아돌봄팀",
-  lines:[
-    "<b>팀장</b> : 오주연 · <b>1부총무</b> : 이희창 · <b>2부총무</b> : 김선영 · <b>회계</b> : 김지연",
-    "<b>1부</b> : 국채림, 김주은, 송예은, 이희창, 최유리",
-    "<b>2부</b> : 권기용, 김선영, 김순연, 김신애, 김지연, 맹주한, 박성옥, 박지은, 오은서, 오주연, 윤미소, 이세희, 정정훈, 진성원, 최유미"
-  ]
-},
-praiseteam:{
-  name:"찬양팀 (금요기도 찬양팀)",
-  lines:[
-    "<b>팀장</b> : 고기영 목사 · <b>총무</b> : 최요한 집사",
-    "<b>인도자</b> : 고기영 목사, 강승구 목사, 김남언 목사, 안빈 강도사",
-    "<b>싱어</b> : 이선희 권사, 김은경 권사, 한지윤 집사, 강신규 집사, 김상민 형제, 최수민 자매, 이하윤 자매",
-    "<b>메인건반</b> : 이지혜 집사, 김예진 자매, 하지빈 자매, 김란희 자매",
-    "<b>베이스기타</b> : 박예원 집사",
-    "<b>드럼</b> : 이정윤 형제, 배세윤 형제, 진성원 집사 (최요한 집사, 정세현 형제)",
-    "<b>엔지니어</b> : 박민욱 형제, 배하진 자매"
-  ]
+<script type="application/json" id="defaultData">
+{
+  "meta": {
+    "title": "📋 예배위원회 운영 대시보드",
+    "subtitle": "서울중앙교회 — 누구나 이어서 운영할 수 있는 연간 시스템",
+    "year": 2026,
+    "budgetTotal": "5,620만",
+    "budgetSub": "2026년 신청 기준",
+    "committeeCount": "7명",
+    "committeeSub": "위원장 1명 본당 4명 · 중3층 2명",
+    "footer": "서울중앙교회 예배위원회 운영 대시보드 · 최초 작성 2026년 · 매년 업데이트 권장",
+    "manualLabel": "📄 주일 봉헌 안내 매뉴얼",
+    "manualUrl": "./주일_봉헌_안내_매뉴얼.pdf"
+  },
+  "budget": {
+    "asOf": "2025년 9월 기준",
+    "rows": [
+      {
+        "name": "성례비",
+        "pct": 39
+      },
+      {
+        "name": "설교예대",
+        "pct": 77
+      },
+      {
+        "name": "찬양대 사례",
+        "pct": 75
+      },
+      {
+        "name": "찬양대 운영",
+        "pct": 66
+      },
+      {
+        "name": "유아돌봄팀",
+        "pct": 75
+      },
+      {
+        "name": "예배준비비",
+        "pct": 57
+      },
+      {
+        "name": "예배음악팀",
+        "pct": 0
+      },
+      {
+        "name": "찬양예배비",
+        "pct": 0
+      }
+    ],
+    "warn": "⚠ 예배음악팀·찬양예배비 미집행 — 하반기 사용 계획 확인 필요",
+    "linkLabel": "📊 위원회재정통계 (웹교회관리)",
+    "linkUrl": "https://ch2ch.or.kr/Main_new2/Frame_Set.asp"
+  },
+  "checklist": [
+    "헌금위원 명단 확인 및 단체 카톡방 개설 (연초)",
+    "헌금 주머니·가운 보관 위치 확인",
+    "연간 예산 신청서 제출 (12월 공동의회 전)",
+    "고난주간 특새카드 발주 — 행사 4주 전",
+    "고난주간 현수막·배너 발주 — 행사 3주 전",
+    "부활절 현수막 발주 — 행사 2주 전",
+    "추수감사절 특새 준비 (11월 2주차)",
+    "제직회 추경 보고 자료 준비",
+    "연말 재정 결산 정리 (12월)",
+    "차기 위원장에게 대시보드 및 거래처 인수인계"
+  ],
+  "vendors": [
+    {
+      "label": "현수막·배너 제작",
+      "name": "그리드룸 (박재준 대표)",
+      "sub": "📞 010-3192-4610",
+      "price": "현수막 1030×3200 → 59,000원 / 배너 600×1800 × 2개 → 100,000원 (배송 포함)"
+    },
+    {
+      "label": "특새카드 인쇄",
+      "name": "다올 (임영석 대표)",
+      "sub": "📞 010-3527-4685 / FAX 02-2265-0400",
+      "price": "A5 500장 기준 187,000원 (VAT 포함) — 농협 351-1329-3253-43 (다올)"
+    },
+    {
+      "label": "헌금주머니·가운 보관",
+      "name": "식당 자동출입문 왼편 붙박이장",
+      "sub": "예배 전 20분 전 도착 · 본당 4명 + 중3층 2명",
+      "price": "2부 위원장: 사무실 맞은편 여전도회실·모퉁이돌 헌금바구니 전달"
+    }
+  ],
+  "servants": [
+    {
+      "label": "위원장",
+      "name": "이충열 장로",
+      "team": ""
+    },
+    {
+      "label": "부위원장",
+      "name": "조신혜 권사 · 권기용 집사",
+      "team": ""
+    },
+    {
+      "label": "에벤에셀찬양대",
+      "name": "박선효 집사",
+      "team": "ebenezer"
+    },
+    {
+      "label": "시온찬양대",
+      "name": "노성원 집사",
+      "team": "zion"
+    },
+    {
+      "label": "찬양팀",
+      "name": "진성원 집사",
+      "team": "praiseteam"
+    },
+    {
+      "label": "예배안내팀",
+      "name": "제민양 집사",
+      "team": "guide"
+    },
+    {
+      "label": "성례준비팀",
+      "name": "이순옥 권사",
+      "team": ""
+    },
+    {
+      "label": "기도팀",
+      "name": "임지언 권사",
+      "team": ""
+    },
+    {
+      "label": "유아돌봄팀",
+      "name": "오주연 집사",
+      "team": "nursery"
+    },
+    {
+      "label": "예배음악팀",
+      "name": "조은숙 권사",
+      "team": ""
+    }
+  ],
+  "teams": {
+    "ebenezer": {
+      "name": "에벤에셀찬양대 (1부)",
+      "lines": [
+        "<b>대장</b> : 박선효",
+        "<b>지휘</b> : 김채영 · <b>피아노</b> : 노영은 · <b>오르간</b> : 이세라",
+        "<b>소프라노</b> : 강우진, 김현선, 이선희, 이예영, 이하윤, 이혜경, 정언약, 조하은, 최가원, 최현실, 박찬미, 조상욱",
+        "<b>알토</b> : 김예진, 박서연, 유미현, 이정미, 최다혜, 한지윤",
+        "<b>테너</b> : 강희광, 김상민, 김재훈, 김종욱, 나창현, 박은혁, 이세린, 최성욱, 최대성",
+        "<b>베이스</b> : 김성민, 김제원, 박선효, 백성광, 강신규, 진재형",
+        "<b>서리집사</b> : 강우진, 김현선, 이혜경, 최현실, 조상욱, 한지윤, 강희광, 백성광, 강신규, 진재형"
+      ]
+    },
+    "zion": {
+      "name": "시온찬양대 (2부)",
+      "lines": [
+        "<b>대장</b> : 노성원",
+        "<b>지휘</b> : 조은숙 · <b>피아노</b> : 권보경 · <b>오르간</b> : 이은영",
+        "<b>소프라노</b> : 김수진, 박원진, 박찬양, 서진선, 어광희, 어지희, 오정희, 윤지희, 이종희, 최세라",
+        "<b>알토</b> : 김미정, 김영경, 김지은, 오노타에, 오영선, 유지영, 이은주, 이현주, 황영미, 백지은",
+        "<b>테너</b> : 권석범, 김병렬, 김진후, 박신호, 박용하, 배태정, 송경선, 오준묵, 최영철, 강신구",
+        "<b>베이스</b> : 김홍민, 노성원, 우정인, 이세영, 이희인",
+        "<b>서리집사</b> : 김수진, 박원진, 서진선, 어광희, 어지희, 오정희, 윤지희, 이종희, 최세라, 김미정, 김영경, 오노타에, 오영선, 이현주, 황영미, 백지은, 김병렬, 김진후, 박신호, 박용하, 오준묵, 최영철, 강신구, 이세영"
+      ]
+    },
+    "guide": {
+      "name": "예배안내팀",
+      "lines": [
+        "<b>팀장</b> : 제민양",
+        "<b>1부</b> : 김예진, 김은종, 이하은, 송재준",
+        "<b>2부</b> : 김미경, 김재희, 박미옥, 조신혜, 이환수",
+        "<b>청년부</b> (매달 2명씩 순환) : 여창훈, 윤태홍, 이준일, 김수빈, 김란희, 유나정, 임솔, 한명은"
+      ]
+    },
+    "nursery": {
+      "name": "유아돌봄팀",
+      "lines": [
+        "<b>팀장</b> : 오주연 · <b>1부총무</b> : 이희창 · <b>2부총무</b> : 김선영 · <b>회계</b> : 김지연",
+        "<b>1부</b> : 국채림, 김주은, 송예은, 이희창, 최유리",
+        "<b>2부</b> : 권기용, 김선영, 김순연, 김신애, 김지연, 맹주한, 박성옥, 박지은, 오은서, 오주연, 윤미소, 이세희, 정정훈, 진성원, 최유미"
+      ]
+    },
+    "praiseteam": {
+      "name": "찬양팀 (금요기도 찬양팀)",
+      "lines": [
+        "<b>팀장</b> : 고기영 목사 · <b>총무</b> : 최요한 집사",
+        "<b>인도자</b> : 고기영 목사, 강승구 목사, 김남언 목사, 안빈 강도사",
+        "<b>싱어</b> : 이선희 권사, 김은경 권사, 한지윤 집사, 강신규 집사, 김상민 형제, 최수민 자매, 이하윤 자매",
+        "<b>메인건반</b> : 이지혜 집사, 김예진 자매, 하지빈 자매, 김란희 자매",
+        "<b>베이스기타</b> : 박예원 집사",
+        "<b>드럼</b> : 이정윤 형제, 배세윤 형제, 진성원 집사 (최요한 집사, 정세현 형제)",
+        "<b>엔지니어</b> : 박민욱 형제, 배하진 자매"
+      ]
+    }
+  },
+  "months": {
+    "1": {
+      "label": "1월",
+      "tags": [
+        {
+          "t": "제직회",
+          "c": "t-blue"
+        },
+        {
+          "t": "예산",
+          "c": "t-green"
+        }
+      ],
+      "major": false,
+      "weeks": [
+        {
+          "w": "1주 (1/4)",
+          "title": "정기제직회·제직임명·성례식",
+          "desc": "신년예배(1일) 후 첫 제직회. 신임 위원 임명 및 성례식 진행.",
+          "badges": [
+            {
+              "l": "필수",
+              "c": "b-red"
+            },
+            {
+              "l": "성례",
+              "c": "b-blue"
+            }
+          ],
+          "alarm": true
+        },
+        {
+          "w": "2주 (1/11)",
+          "title": "지회월례회·전반기 학습 및 세례교육 시작",
+          "desc": "새가족등록, 피택자 교육①② 시작.",
+          "badges": [
+            {
+              "l": "교육",
+              "c": "b-blue"
+            }
+          ],
+          "alarm": false
+        },
+        {
+          "w": "3주 (1/18)",
+          "title": "전반기 직분자 수련회·유아세례교육 시작①",
+          "desc": "비전위원회 및 교역자 주관.",
+          "badges": [],
+          "alarm": false
+        },
+        {
+          "w": "4주 (1/25)",
+          "title": "제직회임원회·정기당회",
+          "desc": "피택자 교육⑤ 병행. 사순절 준비 점검 시작 권장.",
+          "badges": [
+            {
+              "l": "당회",
+              "c": "b-amber"
+            }
+          ],
+          "alarm": false
+        }
+      ]
+    },
+    "2": {
+      "label": "2월",
+      "tags": [
+        {
+          "t": "사순절",
+          "c": "t-red"
+        },
+        {
+          "t": "설연휴",
+          "c": "t-amber"
+        }
+      ],
+      "major": true,
+      "weeks": [
+        {
+          "w": "1주 (2/1)",
+          "title": "정기제직회·장학증서 수여식·피택자 교육④",
+          "desc": "장학위원회 주관.",
+          "badges": [
+            {
+              "l": "장학",
+              "c": "b-blue"
+            }
+          ],
+          "alarm": false
+        },
+        {
+          "w": "2주 (2/8)",
+          "title": "지회월례회·전반기 장학증서 수여식",
+          "desc": "섬김이 세미나 병행 (소그룹위원회).",
+          "badges": [],
+          "alarm": false
+        },
+        {
+          "w": "3주 (2/15)",
+          "title": "설 연휴·전반기 말씀사경회 (2/20-22)",
+          "desc": "비전위원회 주관. 설 연휴(2/16-18) 이후 바로 사경회.",
+          "badges": [
+            {
+              "l": "사경회",
+              "c": "b-blue"
+            }
+          ],
+          "alarm": true
+        },
+        {
+          "w": "4주 (2/22)",
+          "title": "사순절 첫째 주일·결산공동의회·정기당회",
+          "desc": "니케아 신경 사용 시작(2/22-4/5). 제직회임원회 병행. 결산 공동의회 필수.",
+          "badges": [
+            {
+              "l": "결산",
+              "c": "b-red"
+            },
+            {
+              "l": "당회",
+              "c": "b-amber"
+            }
+          ],
+          "alarm": true
+        }
+      ]
+    },
+    "3": {
+      "label": "3월",
+      "tags": [
+        {
+          "t": "고난주간준비",
+          "c": "t-red"
+        },
+        {
+          "t": "종려주일",
+          "c": "t-red"
+        }
+      ],
+      "major": true,
+      "weeks": [
+        {
+          "w": "1주 (3/1)",
+          "title": "장년교육 전반기 개강·정기제직회",
+          "desc": "장년교육위원회, 피택자 교육⑤.",
+          "badges": [
+            {
+              "l": "개강",
+              "c": "b-blue"
+            }
+          ],
+          "alarm": false
+        },
+        {
+          "w": "2주 (3/8)",
+          "title": "지회월례회·피택자 교육⑤",
+          "desc": "당회 주관.",
+          "badges": [],
+          "alarm": false
+        },
+        {
+          "w": "3주 (3/15)",
+          "title": "피택자 수련회 (3/20-21)⑥",
+          "desc": "특새카드 발주 마감 (행사 4주 전 = 이번 주). 배너·현수막 발주도 이번 주 이내.",
+          "badges": [
+            {
+              "l": "카드발주",
+              "c": "b-red"
+            },
+            {
+              "l": "현수막발주",
+              "c": "b-red"
+            }
+          ],
+          "alarm": true
+        },
+        {
+          "w": "5주 (3/29)",
+          "title": "종려주일·제직회임원회·정기당회",
+          "desc": "고난주간 특별새벽기도회 (3/30-4/4) 최종 점검. 배너·현수막 설치 확인.",
+          "badges": [
+            {
+              "l": "고난주간 D-1",
+              "c": "b-red"
+            }
+          ],
+          "alarm": true
+        }
+      ]
+    },
+    "4": {
+      "label": "4월",
+      "tags": [
+        {
+          "t": "고난주간",
+          "c": "t-red"
+        },
+        {
+          "t": "부활절",
+          "c": "t-red"
+        }
+      ],
+      "major": true,
+      "weeks": [
+        {
+          "w": "고난주간 (3/30-4/4)",
+          "title": "고난주간 특별새벽기도회",
+          "desc": "테마: 십자가의 길, 믿음의 길. 특새카드 배포, 현수막(1030×3200) + 배너(600×1800×2개) 설치. 매일 새벽 진행.",
+          "badges": [
+            {
+              "l": "핵심행사",
+              "c": "b-red"
+            },
+            {
+              "l": "배너설치",
+              "c": "b-amber"
+            },
+            {
+              "l": "카드배포",
+              "c": "b-amber"
+            }
+          ],
+          "alarm": true
+        },
+        {
+          "w": "1주 (4/5)",
+          "title": "부활주일·성례식·정기제직회",
+          "desc": "부활절 현수막 설치 (그리드룸, 59,000원). 성례식 진행.",
+          "badges": [
+            {
+              "l": "부활절",
+              "c": "b-red"
+            },
+            {
+              "l": "성례",
+              "c": "b-blue"
+            }
+          ],
+          "alarm": true
+        },
+        {
+          "w": "2주 (4/12)",
+          "title": "지회월례회·피택자 교육⑦",
+          "desc": "서울중부 정기노회(4/13).",
+          "badges": [],
+          "alarm": false
+        },
+        {
+          "w": "3-4주",
+          "title": "유아세례교육②·피택자 교육⑧·제직회임원회·정기당회",
+          "desc": "당회 정기 진행.",
+          "badges": [
+            {
+              "l": "당회",
+              "c": "b-amber"
+            }
+          ],
+          "alarm": false
+        }
+      ]
+    },
+    "5": {
+      "label": "5월",
+      "tags": [
+        {
+          "t": "어린이주일",
+          "c": "t-blue"
+        },
+        {
+          "t": "어버이주일",
+          "c": "t-blue"
+        }
+      ],
+      "major": false,
+      "weeks": [
+        {
+          "w": "1주 (5/3)",
+          "title": "어린이주일·정기제직회·피택자 교육⑨",
+          "desc": "교육위원회·제직회·당회 공동 진행.",
+          "badges": [
+            {
+              "l": "어린이주일",
+              "c": "b-blue"
+            }
+          ],
+          "alarm": false
+        },
+        {
+          "w": "2주 (5/10)",
+          "title": "어버이주일·지회월례회·새가족등록",
+          "desc": "시니어수련회 병행 (시니어위원회).",
+          "badges": [
+            {
+              "l": "어버이주일",
+              "c": "b-green"
+            }
+          ],
+          "alarm": false
+        },
+        {
+          "w": "3주 (5/17)",
+          "title": "스승의 주일·피택자 교육⑩",
+          "desc": "교육위원회·당회 주관.",
+          "badges": [],
+          "alarm": false
+        },
+        {
+          "w": "4-5주",
+          "title": "성령강림주일 (5/24)·제직회임원회·정기당회 (5/31)",
+          "desc": "당회 정기 진행.",
+          "badges": [
+            {
+              "l": "성령강림",
+              "c": "b-blue"
+            }
+          ],
+          "alarm": false
+        }
+      ]
+    },
+    "6": {
+      "label": "6월",
+      "tags": [
+        {
+          "t": "세례·성례",
+          "c": "t-blue"
+        },
+        {
+          "t": "세이레기도회",
+          "c": "t-green"
+        }
+      ],
+      "major": false,
+      "weeks": [
+        {
+          "w": "1주 (6/7)",
+          "title": "정기제직회·피택자 교육⑪",
+          "desc": "제직회, 당회 주관.",
+          "badges": [],
+          "alarm": false
+        },
+        {
+          "w": "2주 (6/14)",
+          "title": "지회월례회",
+          "desc": "각 지회 주관.",
+          "badges": [],
+          "alarm": false
+        },
+        {
+          "w": "3주 (6/21)",
+          "title": "세이레기도회 시작 (6/15-7/5)",
+          "desc": "교육위원회 주관.",
+          "badges": [
+            {
+              "l": "기도회",
+              "c": "b-blue"
+            }
+          ],
+          "alarm": true
+        },
+        {
+          "w": "4주 (6/28)",
+          "title": "성례식(학습·입교·세례)·제직회임원회·정기당회",
+          "desc": "영아부 성경학교(6/4-5), 세례 특별새벽기도회(6/29-7/4).",
+          "badges": [
+            {
+              "l": "성례",
+              "c": "b-red"
+            },
+            {
+              "l": "특새",
+              "c": "b-red"
+            }
+          ],
+          "alarm": true
+        }
+      ]
+    },
+    "7": {
+      "label": "7월",
+      "tags": [
+        {
+          "t": "맥추감사",
+          "c": "t-green"
+        },
+        {
+          "t": "여름수련회",
+          "c": "t-blue"
+        }
+      ],
+      "major": false,
+      "weeks": [
+        {
+          "w": "1주 (7/5)",
+          "title": "맥추감사주일·성례식·정기제직회",
+          "desc": "후반기 학습·세례교육 시작, 피택자 교육⑬.",
+          "badges": [
+            {
+              "l": "맥추감사",
+              "c": "b-green"
+            },
+            {
+              "l": "성례",
+              "c": "b-blue"
+            }
+          ],
+          "alarm": true
+        },
+        {
+          "w": "2주 (7/12)",
+          "title": "지회월례회·유치부 성경학교 (7/12-13)",
+          "desc": "유치부 주관.",
+          "badges": [
+            {
+              "l": "성경학교",
+              "c": "b-blue"
+            }
+          ],
+          "alarm": false
+        },
+        {
+          "w": "3주 (7/19)",
+          "title": "유아세례교육 시작③",
+          "desc": "교역자 주관.",
+          "badges": [],
+          "alarm": false
+        },
+        {
+          "w": "4주 (7/26)",
+          "title": "제직회임원회·정기당회",
+          "desc": "그루터기 하기봉사(7/29-8/2), 중고등부 여름수련회(7/30-8/2), 초등부 여름성경학교(7/31-8/2).",
+          "badges": [
+            {
+              "l": "여름수련회",
+              "c": "b-amber"
+            }
+          ],
+          "alarm": false
+        }
+      ]
+    },
+    "8": {
+      "label": "8월",
+      "tags": [
+        {
+          "t": "수련회",
+          "c": "t-blue"
+        }
+      ],
+      "major": false,
+      "weeks": [
+        {
+          "w": "1주 (8/2)",
+          "title": "정기제직회·후반기 장학증서 수여식·피택자 교육⑭",
+          "desc": "그루터기 수련회(8/3-5).",
+          "badges": [
+            {
+              "l": "장학",
+              "c": "b-blue"
+            }
+          ],
+          "alarm": false
+        },
+        {
+          "w": "2주 (8/9)",
+          "title": "지회월례회·여름사역 보고회",
+          "desc": "교육/청년위원회 주관.",
+          "badges": [],
+          "alarm": false
+        },
+        {
+          "w": "3-4주 (8/16, 8/23)",
+          "title": "정비 및 하반기 준비",
+          "desc": "별도 일정 없음. 하반기 말씀사경회·추수감사 준비 시작 권장.",
+          "badges": [],
+          "alarm": false
+        },
+        {
+          "w": "5주 (8/30)",
+          "title": "제직회임원회·정기당회",
+          "desc": "섬김이 수련회(9/5) 준비.",
+          "badges": [
+            {
+              "l": "섬김이",
+              "c": "b-amber"
+            }
+          ],
+          "alarm": false
+        }
+      ]
+    },
+    "9": {
+      "label": "9월",
+      "tags": [
+        {
+          "t": "추수감사준비",
+          "c": "t-amber"
+        },
+        {
+          "t": "추석",
+          "c": "t-amber"
+        }
+      ],
+      "major": false,
+      "weeks": [
+        {
+          "w": "1주 (9/6)",
+          "title": "정기제직회·장년교육 후반기 개강",
+          "desc": "후반기 말씀사경회 (9/11-13, 비전위원회).",
+          "badges": [
+            {
+              "l": "개강",
+              "c": "b-blue"
+            },
+            {
+              "l": "사경회",
+              "c": "b-blue"
+            }
+          ],
+          "alarm": true
+        },
+        {
+          "w": "2주 (9/13)",
+          "title": "지회월례회·피택자 교육(종합시험)⑮",
+          "desc": "총회주간(9/15-18).",
+          "badges": [
+            {
+              "l": "총회",
+              "c": "b-amber"
+            }
+          ],
+          "alarm": false
+        },
+        {
+          "w": "3주 (9/20)",
+          "title": "피택자 교육·추석 연휴 (9/24-26)",
+          "desc": "청년부 일본단기선교(9/24-28).",
+          "badges": [
+            {
+              "l": "추석",
+              "c": "b-amber"
+            }
+          ],
+          "alarm": false
+        },
+        {
+          "w": "4주 (9/27)",
+          "title": "제직회임원회·정기당회",
+          "desc": "10월 준비 점검.",
+          "badges": [
+            {
+              "l": "당회",
+              "c": "b-amber"
+            }
+          ],
+          "alarm": false
+        }
+      ]
+    },
+    "10": {
+      "label": "10월",
+      "tags": [
+        {
+          "t": "종교개혁",
+          "c": "t-green"
+        },
+        {
+          "t": "수련회",
+          "c": "t-blue"
+        }
+      ],
+      "major": false,
+      "weeks": [
+        {
+          "w": "1주 (10/4)",
+          "title": "정기제직회·유아세례교육 시작④",
+          "desc": "청년부 수련회(10/8-11).",
+          "badges": [],
+          "alarm": false
+        },
+        {
+          "w": "2주 (10/11)",
+          "title": "지회월례회",
+          "desc": "서울중부 정기노회(10/12).",
+          "badges": [],
+          "alarm": false
+        },
+        {
+          "w": "3주 (10/18)",
+          "title": "후반기 직분자 수련회",
+          "desc": "각 지회 주관.",
+          "badges": [],
+          "alarm": false
+        },
+        {
+          "w": "4주 (10/25)",
+          "title": "종교개혁기념주일·제직회임원회·정기당회",
+          "desc": "당회 주관.",
+          "badges": [
+            {
+              "l": "종교개혁",
+              "c": "b-green"
+            }
+          ],
+          "alarm": false
+        }
+      ]
+    },
+    "11": {
+      "label": "11월",
+      "tags": [
+        {
+          "t": "추수감사",
+          "c": "t-green"
+        },
+        {
+          "t": "대림절",
+          "c": "t-blue"
+        }
+      ],
+      "major": true,
+      "weeks": [
+        {
+          "w": "1주 (11/1)",
+          "title": "정기제직회·중앙청년아카데미",
+          "desc": "제직회, 당회 주관.",
+          "badges": [],
+          "alarm": false
+        },
+        {
+          "w": "2주 (11/8)",
+          "title": "지회월례회·새가족등록",
+          "desc": "추수감사절 특별새벽기도회(11/9-14) 사전 준비 완료 필요.",
+          "badges": [
+            {
+              "l": "특새 준비",
+              "c": "b-amber"
+            }
+          ],
+          "alarm": true
+        },
+        {
+          "w": "3주 (11/15)",
+          "title": "추수감사주일·성례식(성찬·학습·입교·세례)",
+          "desc": "소그룹위원회, 당회 주관. 교역자 겨울수련회(11/16-19).",
+          "badges": [
+            {
+              "l": "추수감사",
+              "c": "b-green"
+            },
+            {
+              "l": "성례",
+              "c": "b-blue"
+            }
+          ],
+          "alarm": true
+        },
+        {
+          "w": "4-5주 (11/22-29)",
+          "title": "대림절 첫째 주일 (11/29)·제직회임원회·정기당회",
+          "desc": "니케아 신경 사용(11/29-12/27).",
+          "badges": [
+            {
+              "l": "대림절",
+              "c": "b-blue"
+            }
+          ],
+          "alarm": false
+        }
+      ]
+    },
+    "12": {
+      "label": "12월",
+      "tags": [
+        {
+          "t": "성탄",
+          "c": "t-red"
+        },
+        {
+          "t": "예산심의",
+          "c": "t-red"
+        }
+      ],
+      "major": true,
+      "weeks": [
+        {
+          "w": "1주 (12/6)",
+          "title": "정기제직회",
+          "desc": "2027년 달력 배포.",
+          "badges": [],
+          "alarm": false
+        },
+        {
+          "w": "2주 (12/13)",
+          "title": "예산심의 공동의회·지회월례회",
+          "desc": "당회 주관. 내년도 예산 의결 — 반드시 예산신청서 사전 준비.",
+          "badges": [
+            {
+              "l": "예산심의",
+              "c": "b-red"
+            },
+            {
+              "l": "필수",
+              "c": "b-red"
+            }
+          ],
+          "alarm": true
+        },
+        {
+          "w": "3주 (12/20)",
+          "title": "은퇴식·초등부 성탄모임·성탄절 예배 (12/25)",
+          "desc": "당회/행정위원회·초등부 / 중고등부 작은음악회(12/26).",
+          "badges": [
+            {
+              "l": "성탄",
+              "c": "b-green"
+            },
+            {
+              "l": "은퇴식",
+              "c": "b-blue"
+            }
+          ],
+          "alarm": true
+        },
+        {
+          "w": "4주 (12/27)",
+          "title": "교회학교 졸업식·제직회임원회·정기당회",
+          "desc": "교육위원회 주관. 신년예배(1/1) 준비 및 연말 결산 마감. 차기 위원장에게 인수인계.",
+          "badges": [
+            {
+              "l": "졸업식",
+              "c": "b-blue"
+            },
+            {
+              "l": "결산",
+              "c": "b-red"
+            },
+            {
+              "l": "인수인계",
+              "c": "b-amber"
+            }
+          ],
+          "alarm": true
+        }
+      ]
+    }
+  }
 }
-};
+</script>
+<script>
+const DEFAULT_DATA = JSON.parse(document.getElementById('defaultData').textContent);
+const STORAGE_KEY = 'wd_data_v1';
 
-let currentYear = 2026;
+function loadStore(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){ return JSON.parse(raw); }
+  }catch(e){ console.warn('저장된 데이터를 불러오지 못해 기본값을 사용합니다.', e); }
+  return DEFAULT_DATA;
+}
+
+const STORE = loadStore();
+let currentYear = STORE.meta.year || 2026;
 let selectedMonth = null;
 
 function changeYear(d){
@@ -404,16 +1147,69 @@ function changeYear(d){
   document.getElementById('yearDisplay').textContent = currentYear;
 }
 
+function applyMeta(){
+  document.getElementById('siteTitle').textContent = STORE.meta.title;
+  document.getElementById('siteSubtitle').textContent = STORE.meta.subtitle;
+  document.getElementById('yearDisplay').textContent = currentYear;
+  document.getElementById('budgetTotalVal').textContent = STORE.meta.budgetTotal;
+  document.getElementById('budgetSubVal').textContent = STORE.meta.budgetSub;
+  document.getElementById('committeeCountVal').textContent = STORE.meta.committeeCount;
+  document.getElementById('committeeSubVal').textContent = STORE.meta.committeeSub;
+  document.getElementById('siteFooter').textContent = STORE.meta.footer;
+  document.getElementById('manualLinkLabel').textContent = STORE.meta.manualLabel;
+  document.getElementById('manualLink').href = STORE.meta.manualUrl;
+}
+
 function markDone(i){
   const el = document.getElementById('ci'+i);
   el.classList.toggle('done', el.querySelector('input').checked);
+}
+
+function renderChecklist(){
+  const box = document.getElementById('checklist');
+  box.innerHTML = STORE.checklist.map((text,i)=>`
+<label class="check-item" id="ci${i}"><input type="checkbox" onchange="markDone(${i})"><span>${text}</span></label>`).join('');
+}
+
+function renderBudget(){
+  const b = STORE.budget;
+  document.getElementById('budgetAsOf').textContent = '예산 집행 현황 ('+b.asOf+')';
+  document.getElementById('budgetRows').innerHTML = b.rows.map(r=>`
+<div class="budget-row"><span class="budget-name">${r.name}</span><div class="budget-bar-wrap"><div class="budget-bar" style="width:${r.pct}%"></div></div><span class="budget-pct">${r.pct}%</span></div>`).join('');
+  document.getElementById('budgetWarn').textContent = b.warn;
+  document.getElementById('budgetWarn').style.display = b.warn ? '' : 'none';
+  document.getElementById('budgetLink').href = b.linkUrl;
+  document.getElementById('budgetLinkLabel').textContent = b.linkLabel;
+}
+
+function renderVendors(){
+  document.getElementById('vendorGrid').innerHTML = STORE.vendors.map(v=>`
+<div class="info-card">
+<div class="info-lbl">${v.label}</div>
+<div class="info-name">${v.name}</div>
+<div class="info-sub">${v.sub}</div>
+<div class="info-price">${v.price}</div>
+</div>`).join('');
+}
+
+function renderServants(){
+  document.getElementById('servantGrid').innerHTML = STORE.servants.map(s=>{
+    const clickable = s.team && STORE.teams[s.team];
+    return `
+<div class="info-card${clickable?' clickable':''}"${clickable?` data-team="${s.team}"`:''}>
+<div class="info-lbl">${s.label}${clickable?' <span class="expand-arrow">▶</span>':''}</div>
+<div class="info-name">${s.name}</div>
+${clickable?'<div class="team-members"></div>':''}
+</div>`;
+  }).join('');
 }
 
 function renderCalendar(){
   const grid = document.getElementById('calGrid');
   grid.innerHTML = '';
   for(let m=1;m<=12;m++){
-    const d = DATA[m];
+    const d = STORE.months[m];
+    if(!d) continue;
     const card = document.createElement('div');
     card.className = 'month-card' + (m===selectedMonth?' active':'') + (d.major?' major':'');
     const tags = d.tags.map(t=>`<span class="tag ${t.c}">${t.t}</span>`).join('');
@@ -424,7 +1220,8 @@ function renderCalendar(){
 }
 
 function renderDetail(m){
-  const d = DATA[m];
+  const d = STORE.months[m];
+  if(!d) return;
   document.getElementById('detailTitle').textContent = currentYear+'년 '+d.label+' 상세 일정';
   document.getElementById('detailSub').textContent = '알람 필요 항목은 빨간 점으로 표시';
   const list = document.getElementById('weekList');
@@ -444,17 +1241,20 @@ function renderDetail(m){
 
 function initStats(){
   const m = new Date().getMonth()+1;
-  const d = DATA[m];
+  const d = STORE.months[m];
+  if(!d) return;
   document.getElementById('thisMonth').textContent = m+'월';
   document.getElementById('monthTags').textContent = d.tags.map(t=>t.t).join(' · ');
   let nextM = null, nextW = null;
   for(let i=0;i<12;i++){
     const nm = (m-1+i)%12+1;
-    const fw = DATA[nm].weeks.find(w=>w.alarm);
+    const md = STORE.months[nm];
+    if(!md) continue;
+    const fw = md.weeks.find(w=>w.alarm);
     if(fw){ nextM=nm; nextW=fw; break; }
   }
   if(nextW){
-    document.getElementById('nextAlarmMonth').textContent = DATA[nextM].label;
+    document.getElementById('nextAlarmMonth').textContent = STORE.months[nextM].label;
     document.getElementById('nextAlarmDesc').textContent = nextW.title.slice(0,20)+'…';
   }
 }
@@ -463,7 +1263,7 @@ function initStats(){
 function initTeamCards(){
   document.querySelectorAll('.info-card.clickable').forEach(card=>{
     const key = card.getAttribute('data-team');
-    const team = TEAMS[key];
+    const team = STORE.teams[key];
     if(!team) return;
     const box = card.querySelector('.team-members');
     box.innerHTML = team.lines.map(l=>`<div class="role-line">${l}</div>`).join('');
@@ -473,6 +1273,11 @@ function initTeamCards(){
   });
 }
 
+applyMeta();
+renderChecklist();
+renderBudget();
+renderVendors();
+renderServants();
 renderCalendar();
 initStats();
 initTeamCards();
