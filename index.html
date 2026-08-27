@@ -94,11 +94,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
 .budget-progress-bar{height:100%;border-radius:6px;background:#2563eb;transition:width 0.6s ease;width:0%}
 .budget-progress-bar.warn{background:#f59e0b}
 .budget-progress-bar.danger{background:#dc2626}
-.budget-progress-labels{display:flex;justify-content:space-between;font-size:11px;color:#888;font-variant-numeric:tabular-nums}
+.budget-progress-labels{display:flex;align-items:baseline;justify-content:space-between;gap:8px;color:#888;font-variant-numeric:tabular-nums}
+.budget-spent-val{font-size:24px;font-weight:600;color:#1a1a18}
+.budget-pct-sub{font-size:11px;white-space:nowrap}
 
 @media(max-width:420px){
 .budget-card-figures{gap:8px}
 .budget-figure-val{font-size:20px}
+.budget-spent-val{font-size:20px}
 }
 .info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px}
 .info-card{padding:10px 12px;background:#fafaf9;border-radius:8px;border:1px solid #e8e7e3}
@@ -164,7 +167,7 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb}
 </div>
 </div>
 <div class="budget-progress-wrap"><div class="budget-progress-bar" id="budgetProgressBar"></div></div>
-<div class="budget-progress-labels"><span id="budgetSpentLabel">-</span><span id="budgetPctLabel"></span></div>
+<div class="budget-progress-labels"><span id="budgetSpentLabel" class="budget-spent-val">-</span><span id="budgetPctLabel" class="budget-pct-sub"></span></div>
 </div>
 <div class="stat-card"><div class="lbl">헌금위원</div><div class="val" id="committeeCountVal">7명</div><div class="sub" id="committeeSubVal">위원장 1명 본당 4명 · 중3층 2명</div></div>
 <div class="stat-card"><div class="lbl">다음 중요 알람</div><div class="val" id="nextAlarmMonth" style="font-size:18px">-</div><div class="sub" id="nextAlarmDesc">-</div></div>
