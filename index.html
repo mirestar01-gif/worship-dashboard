@@ -125,7 +125,17 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb}
 <div class="wrap">
 <div class="stats-row">
 <div class="stat-card"><div class="lbl">이번 달</div><div class="val" id="thisMonth">-</div><div class="sub" id="monthTags">-</div></div>
-<div class="stat-card"><div class="lbl">연간 예산 (예배비)</div><div class="val" id="budgetTotalVal">5,620만</div><div class="sub" id="budgetSubVal">2026년 신청 기준</div></div>
+<div class="stat-card" style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+<div>
+<div class="lbl">연간 예산 (예배비)</div>
+<div class="val" id="budgetTotalVal">5,620만</div>
+<div class="sub" id="budgetSubVal">2026년 신청 기준</div>
+</div>
+<div style="text-align:right">
+<div class="lbl">총잔액</div>
+<div class="val" id="budgetBalanceVal" style="font-size:17px;color:#2563eb;white-space:nowrap">-</div>
+</div>
+</div>
 <div class="stat-card"><div class="lbl">헌금위원</div><div class="val" id="committeeCountVal">7명</div><div class="sub" id="committeeSubVal">위원장 1명 본당 4명 · 중3층 2명</div></div>
 <div class="stat-card"><div class="lbl">다음 중요 알람</div><div class="val" id="nextAlarmMonth" style="font-size:18px">-</div><div class="sub" id="nextAlarmDesc">-</div></div>
 </div>
@@ -197,7 +207,8 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb}
     "footer": "서울중앙교회 예배위원회 운영 대시보드 · 최초 작성 2026년 · 매년 업데이트 권장",
     "manualLabel": "📄 주일 봉헌 안내 매뉴얼",
     "manualUrl": "./주일_봉헌_안내_매뉴얼.pdf",
-    "logoUrl": "./logo.png"
+    "logoUrl": "./logo.png",
+    "budgetBalance": "20,025,570원"
   },
   "budget": {
     "asOf": "2026년 8월 기준",
@@ -1157,6 +1168,7 @@ function applyMeta(){
   document.getElementById('yearDisplay').textContent = currentYear;
   document.getElementById('budgetTotalVal').textContent = STORE.meta.budgetTotal;
   document.getElementById('budgetSubVal').textContent = STORE.meta.budgetSub;
+  document.getElementById('budgetBalanceVal').textContent = STORE.meta.budgetBalance || '-';
   document.getElementById('committeeCountVal').textContent = STORE.meta.committeeCount;
   document.getElementById('committeeSubVal').textContent = STORE.meta.committeeSub;
   document.getElementById('siteFooter').textContent = STORE.meta.footer;
