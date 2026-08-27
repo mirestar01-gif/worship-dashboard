@@ -31,6 +31,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
 .stat-card .lbl{font-size:11px;color:#888;margin-bottom:4px}
 .stat-card .val{font-size:24px;font-weight:600;color:#1a1a18}
 .stat-card .sub{font-size:11px;color:#aaa;margin-top:2px}
+.stat-manual-link{display:inline-flex;align-items:center;gap:3px;font-size:11px;color:#2563eb;text-decoration:none;font-weight:600;margin-top:8px}
+.stat-manual-link:hover{text-decoration:underline}
 .section-title{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px}
 .cal-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:20px}
 .month-card{background:#fff;border:1px solid #e8e7e3;border-radius:10px;padding:10px 12px;cursor:pointer;transition:all 0.15s}
@@ -169,7 +171,7 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb}
 <div class="budget-progress-wrap"><div class="budget-progress-bar" id="budgetProgressBar"></div></div>
 <div class="budget-progress-labels"><span id="budgetSpentLabel" class="budget-spent-val">-</span><span id="budgetPctLabel" class="budget-pct-sub"></span></div>
 </div>
-<div class="stat-card"><div class="lbl">헌금위원</div><div class="val" id="committeeCountVal">7명</div><div class="sub" id="committeeSubVal">위원장 1명 본당 4명 · 중3층 2명</div></div>
+<div class="stat-card"><div class="lbl">헌금위원</div><div class="val" id="committeeCountVal">7명</div><div class="sub" id="committeeSubVal">위원장 1명 본당 4명 · 중3층 2명</div><a id="committeeManualLink" class="stat-manual-link" href="#" target="_blank" rel="noopener">📄 <span id="committeeManualLabel">메뉴얼</span> PDF 열기 ↗</a></div>
 <div class="stat-card"><div class="lbl">다음 중요 알람</div><div class="val" id="nextAlarmMonth" style="font-size:18px">-</div><div class="sub" id="nextAlarmDesc">-</div></div>
 </div>
 
@@ -219,7 +221,7 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb}
 <div class="panel" style="margin-bottom:20px">
 <div class="section-title">봉헌 진행 순서 (매주 반복)</div>
 <a id="manualLink" href="./주일_봉헌_안내_매뉴얼.pdf" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;margin-top:8px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;color:#1d4ed8;text-decoration:none;font-size:14px;font-weight:600">
-<span id="manualLinkLabel">📄 주일 봉헌 안내 매뉴얼</span>
+<span id="manualLinkLabel">📄 주일 봉헌 안내 메뉴얼</span>
 <span style="font-size:12px;font-weight:500;color:#2563eb">PDF 열기 ↗</span>
 </a>
 </div>
@@ -241,7 +243,7 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb}
     "committeeCount": "7명",
     "committeeSub": "위원장 1명 본당 4명 · 중3층 2명",
     "footer": "서울중앙교회 예배위원회 운영 대시보드 · 최초 작성 2026년 · 매년 업데이트 권장",
-    "manualLabel": "📄 주일 봉헌 안내 매뉴얼",
+    "manualLabel": "📄 주일 봉헌 안내 메뉴얼",
     "manualUrl": "./주일_봉헌_안내_매뉴얼.pdf",
     "logoUrl": "./logo.png",
     "budgetBalance": "20,025,570원"
@@ -1249,6 +1251,7 @@ function applyMeta(){
   document.getElementById('siteFooter').textContent = STORE.meta.footer;
   document.getElementById('manualLinkLabel').textContent = STORE.meta.manualLabel;
   document.getElementById('manualLink').href = STORE.meta.manualUrl;
+  document.getElementById('committeeManualLink').href = STORE.meta.manualUrl;
 }
 
 function markDone(i){
