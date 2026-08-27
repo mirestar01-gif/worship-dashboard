@@ -26,7 +26,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
 .settings-link{font-size:12px;color:#888;text-decoration:none;border:1px solid #ddd;border-radius:8px;padding:5px 12px;transition:background 0.1s}
 .settings-link:hover{background:#f0efeb;color:#555}
 .wrap{max-width:1100px;margin:0 auto;padding:20px 16px}
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
 .stat-card{background:#fff;border-radius:12px;padding:14px 16px;border:1px solid #e8e7e3}
 .stat-card .lbl{font-size:11px;color:#888;margin-bottom:4px}
 .stat-card .val{font-size:24px;font-weight:600;color:#1a1a18}
@@ -82,8 +82,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
 .budget-pct{font-size:11px;color:#888;min-width:30px;text-align:right}
 .budget-warn{margin-top:10px;padding:8px 10px;background:#fef3c7;border-radius:8px;font-size:11px;color:#92400e}
 
-.stat-card.budget-card{grid-column:span 2;display:flex;flex-direction:column;gap:12px}
-.budget-card-head{display:flex;align-items:center;justify-content:space-between}
+.budget-panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.budget-panel-divider{height:1px;background:#e8e7e3;margin:18px 0 14px}
 .budget-pct-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:#eff6ff;color:#2563eb;white-space:nowrap}
 .budget-pct-badge.warn{background:#fef3c7;color:#92400e}
 .budget-pct-badge.danger{background:#fee2e2;color:#b91c1c}
@@ -152,25 +152,6 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb}
 <div class="wrap">
 <div class="stats-row">
 <div class="stat-card"><div class="lbl">이번 달</div><div class="val" id="thisMonth">-</div><div class="sub" id="monthTags">-</div></div>
-<div class="stat-card budget-card">
-<div class="budget-card-head">
-<div class="lbl">연간 예산 (예배비)</div>
-<div class="budget-pct-badge" id="budgetPctBadge">-</div>
-</div>
-<div class="budget-card-figures">
-<div class="budget-figure">
-<div class="budget-figure-lbl">총예산</div>
-<div class="budget-figure-val" id="budgetTotalVal">5,120만</div>
-<div class="sub" id="budgetSubVal">2026년 신청 기준</div>
-</div>
-<div class="budget-figure align-right">
-<div class="budget-figure-lbl">총잔액</div>
-<div class="budget-figure-val accent" id="budgetBalanceVal">-</div>
-</div>
-</div>
-<div class="budget-progress-wrap"><div class="budget-progress-bar" id="budgetProgressBar"></div></div>
-<div class="budget-progress-labels"><span id="budgetSpentLabel" class="budget-spent-val">-</span><span id="budgetPctLabel" class="budget-pct-sub"></span></div>
-</div>
 <div class="stat-card"><div class="lbl">헌금위원</div><div class="val" id="committeeCountVal">7명</div><div class="sub" id="committeeSubVal">위원장 1명 본당 4명 · 중3층 2명</div><a id="committeeManualLink" class="stat-manual-link" href="#" target="_blank" rel="noopener">📄 <span id="committeeManualLabel">메뉴얼</span> PDF 열기 ↗</a></div>
 <div class="stat-card"><div class="lbl">다음 중요 알람</div><div class="val" id="nextAlarmMonth" style="font-size:18px">-</div><div class="sub" id="nextAlarmDesc">-</div></div>
 </div>
@@ -192,12 +173,30 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb}
 </div>
 </div>
 
-<div class="two-col">
-<div class="panel">
+<div class="panel" style="margin-bottom:20px">
 <div class="section-title">위원장 연간 체크리스트</div>
 <div class="checklist" id="checklist"></div>
 </div>
-<div class="panel">
+
+<div class="panel budget-panel" style="margin-bottom:20px">
+<div class="budget-panel-head">
+<div class="section-title" style="margin-bottom:0">연간 예산 (예배비)</div>
+<div class="budget-pct-badge" id="budgetPctBadge">-</div>
+</div>
+<div class="budget-card-figures">
+<div class="budget-figure">
+<div class="budget-figure-lbl">총예산</div>
+<div class="budget-figure-val" id="budgetTotalVal">5,120만</div>
+<div class="sub" id="budgetSubVal">2026년 신청 기준</div>
+</div>
+<div class="budget-figure align-right">
+<div class="budget-figure-lbl">총잔액</div>
+<div class="budget-figure-val accent" id="budgetBalanceVal">-</div>
+</div>
+</div>
+<div class="budget-progress-wrap"><div class="budget-progress-bar" id="budgetProgressBar"></div></div>
+<div class="budget-progress-labels"><span id="budgetSpentLabel" class="budget-spent-val">-</span><span id="budgetPctLabel" class="budget-pct-sub"></span></div>
+<div class="budget-panel-divider"></div>
 <div class="section-title" id="budgetAsOf">예산 집행 현황</div>
 <div class="budget-rows" id="budgetRows"></div>
 <div class="budget-warn" id="budgetWarn"></div>
@@ -205,7 +204,6 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb}
 <span id="budgetLinkLabel">📊 위원회재정통계 (웹교회관리)</span>
 <span style="font-size:12px;font-weight:500;color:#2563eb">사이트 열기 ↗</span>
 </a>
-</div>
 </div>
 
 <div class="panel" style="margin-bottom:20px">
