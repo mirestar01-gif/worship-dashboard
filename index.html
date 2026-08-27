@@ -152,7 +152,7 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb}
 <div class="wrap">
 <div class="stats-row">
 <div class="stat-card"><div class="lbl">이번 달</div><div class="val" id="thisMonth">-</div><div class="sub" id="monthTags">-</div></div>
-<div class="stat-card"><div class="lbl">헌금위원</div><div class="val" id="committeeCountVal">7명</div><div class="sub" id="committeeSubVal">위원장 1명 본당 4명 · 중3층 2명</div><a id="committeeManualLink" class="stat-manual-link" href="#" target="_blank" rel="noopener">📄 <span id="committeeManualLabel">메뉴얼</span> PDF 열기 ↗</a></div>
+<div class="stat-card"><div class="lbl">헌금위원</div><div class="val" id="committeeCountVal">7명</div><div class="sub" id="committeeSubVal">위원장 1명 본당 4명 · 중3층 2명</div></div>
 <div class="stat-card"><div class="lbl">다음 중요 알람</div><div class="val" id="nextAlarmMonth" style="font-size:18px">-</div><div class="sub" id="nextAlarmDesc">-</div></div>
 </div>
 
@@ -304,7 +304,8 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb}
       "label": "헌금주머니·가운 보관",
       "name": "식당 자동출입문 왼편 붙박이장",
       "sub": "예배 전 20분 전 도착 · 본당 4명 + 중3층 2명",
-      "price": "2부 위원장: 사무실 맞은편 여전도회실·모퉁이돌 헌금바구니 전달"
+      "price": "2부 위원장: 사무실 맞은편 여전도회실·모퉁이돌 헌금바구니 전달",
+      "manualLink": true
     }
   ],
   "servants": [
@@ -1240,7 +1241,6 @@ function applyMeta(){
   document.getElementById('committeeCountVal').textContent = STORE.meta.committeeCount;
   document.getElementById('committeeSubVal').textContent = STORE.meta.committeeSub;
   document.getElementById('siteFooter').textContent = STORE.meta.footer;
-  document.getElementById('committeeManualLink').href = STORE.meta.manualUrl;
 }
 
 function markDone(i){
@@ -1274,6 +1274,7 @@ function renderVendors(){
 <div class="info-name">${v.name}</div>
 <div class="info-sub">${v.sub}</div>
 <div class="info-price">${v.price}</div>
+${v.manualLink?`<a class="stat-manual-link" href="${STORE.meta.manualUrl}" target="_blank" rel="noopener">📄 메뉴얼 PDF 열기 ↗</a>`:''}
 </div>`).join('');
 }
 
