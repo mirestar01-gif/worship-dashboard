@@ -28,8 +28,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
 .item-card .del:hover{color:#dc2626;background:#fee2e2}
 .add-btn{display:inline-flex;align-items:center;gap:6px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer}
 .add-btn:hover{background:#dbeafe}
-.section-reset-btn{display:inline-flex;align-items:center;gap:5px;background:#fee2e2;color:#b91c1c;border:1px solid #fecaca;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;white-space:nowrap}
-.section-reset-btn:hover{background:#fecaca}
+.section-link-btn{display:inline-flex;align-items:center;gap:5px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;white-space:nowrap;text-decoration:none}
+.section-link-btn:hover{background:#dbeafe}
 .chip-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
 .chip{display:flex;align-items:center;gap:4px;background:#fff;border:1px solid #e0dfda;border-radius:999px;padding:3px 4px 3px 10px;font-size:11px}
 .chip input[type=text]{border:none;background:none;font-size:11px;width:70px;padding:2px}
@@ -108,8 +108,8 @@ select{font-family:inherit}
 </div>
 
 <div class="panel">
-<div style="display:flex;align-items:center;justify-content:space-between;gap:12px"><h2>예산 집행 현황</h2><button type="button" class="section-reset-btn" id="resetBudgetBtn">↺ 예산 초기화</button></div>
-<div class="hint">항목명과 집행률(%)을 입력하세요. 항목 추가/삭제가 가능합니다.</div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px"><h2>예산 집행 현황</h2><button type="button" class="section-link-btn" id="openBudgetStatsBtn">🔗 예산 최신화 (위원회재정통계 열기)</button></div>
+<div class="hint">항목명과 집행률(%)을 입력하세요. 항목 추가/삭제가 가능합니다. 최신 숫자는 위 버튼으로 웹교회관리에 들어가 확인 후 입력하세요.</div>
 <div id="budgetRowsEdit"></div>
 <button class="add-btn" id="addBudgetRow">+ 항목 추가</button>
 <div class="field" style="margin-top:14px"><label>기준 시점 (예: 2025년 9월 기준)</label><input type="text" id="f_budgetAsOf"></div>
@@ -1265,29 +1265,10 @@ document.getElementById('addBudgetRow').addEventListener('click', ()=>{
   renderBudgetEdit();
 });
 
-function parseAmountKRW(str){
-  if(!str) return null;
-  let s = String(str).replace(/,/g,'').replace(/원/g,'').trim();
-  let total = 0, matched = false;
-  const eok = s.match(/([\d.]+)\s*억/);
-  if(eok){ total += parseFloat(eok[1]) * 100000000; s = s.replace(eok[0],''); matched = true; }
-  const man = s.match(/([\d.]+)\s*만/);
-  if(man){ total += parseFloat(man[1]) * 10000; s = s.replace(man[0],''); matched = true; }
-  const rest = s.replace(/[^\d.]/g,'');
-  if(rest){ total += parseFloat(rest); matched = true; }
-  return matched ? total : null;
-}
-
-document.getElementById('resetBudgetBtn').addEventListener('click', ()=>{
-  if(!confirm('예산 집행 현황을 초기화합니다.\n· 총잔액 = 총예산 (집행 0원)\n· 모든 항목 집행률 0%\n계속할까요?')) return;
-  const total = parseAmountKRW(store.meta.budgetTotal);
-  if(total !== null){
-    store.meta.budgetBalance = Math.round(total).toLocaleString('ko-KR')+'원';
-  }
-  store.budget.rows.forEach(r=> r.pct = 0);
-  renderMeta();
-  renderBudgetEdit();
-  showToast('예산 집행 현황을 초기화했습니다 (저장 버튼을 눌러야 반영됩니다)');
+document.getElementById('openBudgetStatsBtn').addEventListener('click', ()=>{
+  const url = store.budget.linkUrl || 'https://ch2ch.or.kr/Main_new2/Frame_Set.asp';
+  window.open(url, '_blank', 'noopener');
+  showToast('웹교회관리에서 최신 집행 현황을 확인한 뒤, 아래 항목에 숫자를 입력해주세요');
 });
 
 /* ---------- CHECKLIST ---------- */
