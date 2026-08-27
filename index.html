@@ -1198,7 +1198,7 @@ function loadStore(){
 
 const STORE = loadStore();
 let currentYear = STORE.meta.year || 2026;
-let selectedMonth = null;
+let selectedMonth = new Date().getMonth()+1;
 
 function changeYear(d){
   currentYear += d;
@@ -1406,6 +1406,7 @@ renderBudget();
 renderVendors();
 renderServants();
 renderCalendar();
+if(STORE.months[selectedMonth]) renderDetail(selectedMonth);
 initStats();
 initTeamCards();
 </script>
