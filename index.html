@@ -161,7 +161,7 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb}
 <div class="wrap">
 <div class="stats-row">
 <div class="stat-card"><div class="lbl" style="display:flex;align-items:center;justify-content:space-between">이번 달<button type="button" id="thisMonthOpenBtn" class="checklist-link-btn" style="margin-left:0">사이트 열기 ↗</button></div><div class="val" id="thisMonth">-</div><div class="sub" id="monthTags">-</div></div>
-<div class="stat-card"><div class="lbl">다음 중요 알람</div><div class="val" id="nextAlarmMonth" style="font-size:18px">-</div><div class="sub" id="nextAlarmDesc">-</div><div style="display:flex;align-items:center;gap:4px;margin-top:8px"><select id="monthPicker" style="font-size:11px;border:1px solid #dbeafe;border-radius:999px;padding:2px 4px;color:#2563eb;background:#eff6ff;font-weight:600;max-width:60px"></select><button type="button" id="monthPickerOpenBtn" class="checklist-link-btn" style="margin-left:0">사이트 열기 ↗</button></div></div>
+<div class="stat-card"><div style="display:flex;align-items:center;gap:8px"><select id="monthPicker" style="font-size:22px;border:1px solid #dbeafe;border-radius:999px;padding:4px 8px;color:#2563eb;background:#eff6ff;font-weight:600;max-width:120px"></select><button type="button" id="monthPickerOpenBtn" class="checklist-link-btn" style="margin-left:0">사이트 열기 ↗</button></div></div>
 </div>
 
 <div class="detail-panel">
@@ -1396,18 +1396,6 @@ function initStats(){
     openBtn.addEventListener('click', ()=>{
       toggleDetail(m);
     });
-  }
-  let nextM = null, nextW = null;
-  for(let i=0;i<12;i++){
-    const nm = (m-1+i)%12+1;
-    const md = STORE.months[nm];
-    if(!md) continue;
-    const fw = md.weeks.find(w=>w.alarm);
-    if(fw){ nextM=nm; nextW=fw; break; }
-  }
-  if(nextW){
-    document.getElementById('nextAlarmMonth').textContent = STORE.months[nextM].label;
-    document.getElementById('nextAlarmDesc').textContent = nextW.title.slice(0,20)+'…';
   }
 }
 
