@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>관리 설정 — 예배위원회 운영 대시보드</title>
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+<meta name="theme-color" content="#1d4ed8">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans-serif;background:#f5f4f0;color:#1a1a18;min-height:100vh;padding-bottom:90px}
+.header{background:#fff;border-bottom:1px solid #e5e4e0;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20}
+.header h1{font-size:17px;font-weight:600}
+.header p{font-size:12px;color:#888;margin-top:2px}
+.back-link{font-size:12px;color:#888;text-decoration:none;border:1px solid #ddd;border-radius:8px;padding:5px 12px}
+.back-link:hover{background:#f0efeb}
+.wrap{max-width:820px;margin:0 auto;padding:20px 16px}
+.panel{background:#fff;border:1px solid #e8e7e3;border-radius:12px;padding:18px 20px;margin-bottom:16px}
+.panel h2{font-size:14px;font-weight:600;margin-bottom:4px}
+.panel .hint{font-size:11px;color:#999;margin-bottom:12px;line-height:1.5}
+.field{margin-bottom:10px}
+.field label{display:block;font-size:11px;color:#888;margin-bottom:4px}
+.field input[type=text],.field input[type=number],.field textarea{width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:8px;font-size:13px;font-family:inherit;background:#fafaf9;color:#1a1a18}
+.field textarea{resize:vertical;min-height:52px;line-height:1.5}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.item-card{border:1px solid #e8e7e3;border-radius:10px;padding:12px 14px;margin-bottom:10px;background:#fafaf9;position:relative}
+.item-card .del{position:absolute;top:8px;right:8px;background:none;border:none;color:#bbb;font-size:13px;cursor:pointer;padding:4px 6px;border-radius:6px}
+.item-card .del:hover{color:#dc2626;background:#fee2e2}
+.add-btn{display:inline-flex;align-items:center;gap:6px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer}
+.add-btn:hover{background:#dbeafe}
+.section-link-btn{display:inline-flex;align-items:center;gap:5px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;white-space:nowrap;text-decoration:none}
+.section-link-btn:hover{background:#dbeafe}
+.chip-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.chip{display:flex;align-items:center;gap:4px;background:#fff;border:1px solid #e0dfda;border-radius:999px;padding:3px 4px 3px 10px;font-size:11px}
+.chip input[type=text]{border:none;background:none;font-size:11px;width:70px;padding:2px}
+.chip select{border:none;background:none;font-size:10px;color:#888}
+.chip .chip-del{border:none;background:#f3f2ee;border-radius:50%;width:16px;height:16px;font-size:10px;color:#999;cursor:pointer;line-height:1}
+.chip label{display:flex;align-items:center;gap:3px;font-size:10px;color:#666;padding:0 4px}
+.month-block{border:1px solid #e8e7e3;border-radius:10px;margin-bottom:8px;overflow:hidden}
+.month-head{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;cursor:pointer;background:#fafaf9}
+.month-head:hover{background:#f2f1ec}
+.month-head .mname{font-size:13px;font-weight:600}
+.month-head .mmeta{font-size:11px;color:#999}
+.month-body{padding:14px;border-top:1px solid #e8e7e3;display:none}
+.month-block.open .month-body{display:block}
+.month-block.open .chevron{transform:rotate(90deg)}
+.chevron{display:inline-block;transition:transform 0.15s;color:#bbb;margin-right:6px}
+.week-block{border:1px solid #e8e7e3;border-radius:8px;padding:10px 12px;margin-bottom:8px;background:#fff;position:relative}
+.subhint{font-size:10px;color:#aaa;margin:6px 0}
+.checkline{display:flex;align-items:center;gap:6px;font-size:12px;color:#555;margin:8px 0}
+.checkline input{accent-color:#2563eb;width:14px;height:14px}
+.savebar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e5e4e0;padding:12px 20px;display:flex;justify-content:center;gap:10px;align-items:center;z-index:30}
+.btn{border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer}
+.btn-primary{background:#2563eb;color:#fff}
+.btn-primary:hover{background:#1d4ed8}
+.btn-ghost{background:#f0efeb;color:#555}
+.btn-ghost:hover{background:#e5e4e0}
+.btn-danger{background:#fee2e2;color:#b91c1c}
+.btn-danger:hover{background:#fecaca}
+.toast{position:fixed;bottom:74px;left:50%;transform:translateX(-50%);background:#1a1a18;color:#fff;padding:9px 18px;border-radius:999px;font-size:12px;opacity:0;pointer-events:none;transition:opacity 0.25s;z-index:40}
+.toast.show{opacity:1}
+select{font-family:inherit}
+.lock-wrap{max-width:340px;margin:80px auto;text-align:center}
+.lock-wrap h1{font-size:16px;margin-bottom:6px}
+.lock-wrap p{font-size:12px;color:#888;margin-bottom:20px;line-height:1.6}
+.pin-input{width:100%;text-align:center;letter-spacing:14px;font-size:22px;padding:14px;border:1px solid #ddd;border-radius:10px;margin-bottom:12px}
+.pin-error{font-size:12px;color:#dc2626;margin-bottom:10px;min-height:16px}
+.file-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+@media(max-width:640px){.row2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div id="lockScreen" class="lock-wrap">
+  <h1 id="lockTitle">🔒 관리 설정</h1>
+  <p id="lockDesc">비밀번호(4자리)를 입력해주세요.</p>
+  <input class="pin-input" id="pinInput" type="password" inputmode="numeric" maxlength="4" autocomplete="off">
+  <div class="pin-error" id="pinError"></div>
+  <button class="btn btn-primary" style="width:100%" id="pinSubmit">확인</button>
+  <p style="margin-top:16px"><a href="./index.html" style="color:#888;font-size:12px">← 대시보드로 돌아가기</a></p>
+</div>
+
+<div id="app" style="display:none">
+<div class="header">
+<div>
+<h1>⚙ 관리 설정</h1>
+<p>여기서 수정한 내용은 저장 후 대시보드 새로고침 시 반영됩니다</p>
+</div>
+<a class="back-link" href="./index.html">← 대시보드</a>
+</div>
+
+<div class="wrap">
+
+<div class="panel">
+<h2>사이트 기본 정보</h2>
+<div class="field"><label>대시보드 제목</label><input type="text" id="f_title"></div><div class="row2">
+<div class="field"><label>연간 예산 표시값 (예: 5,620만)</label><input type="text" id="f_budgetTotal"></div>
+<div class="field"><label>연간 예산 설명 (예: 2026년 신청 기준)</label><input type="text" id="f_budgetSub"></div>
+</div>
+<div class="field" style="max-width:220px"><label>총잔액 (연간 예산 카드 오른쪽에 표시)</label><input type="text" id="f_budgetBalance"></div>
+<div class="row2">
+<div class="field"><label>헌금위원 인원 표시값 (예: 7명)</label><input type="text" id="f_committeeCount"></div>
+<div class="field"><label>헌금위원 구성 설명</label><input type="text" id="f_committeeSub"></div>
+</div>
+<div class="field"><label>로고 이미지 경로 (예: ./logo.png, 비워두면 표시 안 함)</label><input type="text" id="f_logoUrl"></div>
+<div class="field"><label>봉헌 메뉴얼 PDF 파일명/경로</label><input type="text" id="f_manualUrl"></div>
+<div class="field"><label>하단 푸터 문구</label><input type="text" id="f_footer"></div>
+</div>
+
+<div class="panel">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px"><h2>예산 집행 현황</h2><button type="button" class="section-link-btn" id="openBudgetStatsBtn">🔗 예산 최신화 (위원회재정통계 열기)</button></div>
+<div class="hint">항목명과 집행률(%)을 입력하세요. 항목 추가/삭제가 가능합니다. 최신 숫자는 위 버튼으로 웹교회관리에 들어가 확인 후 입력하세요.</div>
+<div id="budgetRowsEdit"></div>
+<button class="add-btn" id="addBudgetRow">+ 항목 추가</button>
+<div class="field" style="margin-top:14px"><label>기준 시점 (예: 2025년 9월 기준)</label><input type="text" id="f_budgetAsOf"></div>
+<div class="field"><label>경고 문구 (미집행 항목 알림 등, 비워두면 표시 안 함)</label><input type="text" id="f_budgetWarn"></div>
+<div class="row2">
+<div class="field"><label>재정통계 링크 이름</label><input type="text" id="f_budgetLinkLabel"></div>
+<div class="field"><label>재정통계 링크 URL</label><input type="text" id="f_budgetLinkUrl"></div>
+</div>
+</div>
+
+<div class="panel">
+<h2>위원장 연간 체크리스트</h2>
+<div class="hint">항목을 추가/삭제할 수 있습니다.</div>
+<div id="checklistEdit"></div>
+<button class="add-btn" id="addChecklistItem">+ 항목 추가</button>
+</div>
+
+<div class="panel">
+<h2>거래처 및 인수인계 정보</h2>
+<div class="hint">카드 형태로 대시보드에 표시됩니다.</div>
+<div id="vendorsEdit"></div>
+<button class="add-btn" id="addVendor">+ 거래처 추가</button>
+</div>
+
+<div class="panel">
+<h2>팀별 명단 (찬양대·안내팀 등)</h2>
+<div class="hint">각 줄은 대시보드에 그대로 표시됩니다. 굵게 표시하고 싶은 부분은 &lt;b&gt;내용&lt;/b&gt; 으로 감싸주세요. (예: &lt;b&gt;대장&lt;/b&gt; : 홍길동)</div>
+<div id="teamsEdit"></div>
+<button class="add-btn" id="addTeam">+ 팀 추가</button>
+</div>
+
+<div class="panel">
+<h2>예배위원회 섬기는 분</h2>
+<div class="hint">직책과 이름을 입력하고, 필요하면 위에서 만든 팀과 연결해 명단 펼치기 기능을 사용할 수 있습니다.</div>
+<div id="servantsEdit"></div>
+<button class="add-btn" id="addServant">+ 항목 추가</button>
+</div>
+
+<div class="panel">
+<h2>월별 일정 (달력)</h2>
+<div class="hint">월을 클릭하면 펼쳐집니다. 태그·주차 일정·배지를 자유롭게 수정할 수 있습니다.</div>
+<div id="monthsEdit"></div>
+</div>
+
+<div class="panel">
+<h2>비밀번호 변경</h2>
+<div class="row2">
+<div class="field"><label>현재 비밀번호</label><input type="password" id="pinCurrent" maxlength="4" inputmode="numeric"></div>
+<div class="field"><label>새 비밀번호 (4자리 숫자)</label><input type="password" id="pinNew" maxlength="4" inputmode="numeric"></div>
+</div>
+<div class="field" style="max-width:200px"><label>새 비밀번호 확인</label><input type="password" id="pinNewConfirm" maxlength="4" inputmode="numeric"></div>
+<button class="btn btn-ghost" id="changePinBtn">비밀번호 변경</button>
+<div class="hint" style="margin-top:10px">※ 이 비밀번호는 이 웹페이지 코드 안에서만 확인하는 간단한 잠금장치이며, 실제 서버 보안은 아닙니다. 아주 민감한 정보는 올리지 마세요.</div>
+</div>
+
+<div class="panel">
+<h2>백업 / 이전</h2>
+<div class="hint">다른 브라우저나 컴퓨터에서도 같은 내용을 보려면, 여기서 내보낸 파일을 그 브라우저의 설정 페이지에서 불러오기 하세요.</div>
+<div class="file-row">
+<button class="btn btn-ghost" id="exportBtn">⬇ 내보내기 (백업 파일 저장)</button>
+<label class="btn btn-ghost" style="cursor:pointer">⬆ 가져오기 (백업 파일 불러오기)<input type="file" id="importFile" accept="application/json" style="display:none"></label>
+<button class="btn btn-danger" id="resetBtn">기본값으로 초기화</button>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="savebar" id="saveBar" style="display:none">
+<button class="btn btn-primary" id="saveBtn">💾 저장하기</button>
+<span style="font-size:11px;color:#999">저장 후 대시보드 페이지를 새로고침하면 반영됩니다</span>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="./data/seed.js"></script>
+<script src="./assets/store.js"></script>
+<script>
+// 기본값은 data/seed.js(window.WD_SEED), 저장/불러오기는 assets/store.js(WD)가 담당합니다.
+const PIN_KEY = 'wd_pin';
+
+let store = WD.load();
+
+const TAG_COLORS = [["t-red","빨강"],["t-blue","파랑"],["t-green","초록"],["t-amber","주황"],["t-gray","회색"]];
+const BADGE_COLORS = [["b-red","빨강"],["b-blue","파랑"],["b-green","초록"],["b-amber","주황"]];
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 1800);
+}
+
+/* ---------- PIN GATE ---------- */
+function initLock(){
+  const savedPin = localStorage.getItem(PIN_KEY);
+  const lockScreen = document.getElementById('lockScreen');
+  const app = document.getElementById('app');
+  const pinInput = document.getElementById('pinInput');
+  const pinError = document.getElementById('pinError');
+
+  if(!savedPin){
+    document.getElementById('lockTitle').textContent = '🔒 관리 설정 — 비밀번호 설정';
+    document.getElementById('lockDesc').textContent = '처음 사용하시네요. 앞으로 쓸 4자리 비밀번호를 정해주세요.';
+  }
+
+  function attempt(){
+    const v = pinInput.value.trim();
+    if(v.length!==4 || !/^\d{4}$/.test(v)){
+      pinError.textContent = '숫자 4자리를 입력해주세요.';
+      return;
+    }
+    const currentSaved = localStorage.getItem(PIN_KEY);
+    if(!currentSaved){
+      localStorage.setItem(PIN_KEY, v);
+      unlock();
+      return;
+    }
+    if(v === currentSaved){
+      unlock();
+    }else{
+      pinError.textContent = '비밀번호가 올바르지 않습니다.';
+      pinInput.value = '';
+    }
+  }
+
+  function unlock(){
+    lockScreen.style.display = 'none';
+    app.style.display = 'block';
+    document.getElementById('saveBar').style.display = 'flex';
+    renderAll();
+  }
+
+  document.getElementById('pinSubmit').addEventListener('click', attempt);
+  pinInput.addEventListener('keydown', e=>{ if(e.key==='Enter') attempt(); });
+  pinInput.focus();
+}
+
+/* ---------- GENERIC FIELD BINDING ---------- */
+function bindText(id, getVal, setVal){
+  const el = document.getElementById(id);
+  el.value = getVal();
+  el.addEventListener('input', ()=> setVal(el.value));
+}
+
+function renderMeta(){
+  bindText('f_title', ()=>store.meta.title, v=>store.meta.title=v);
+  bindText('f_budgetTotal', ()=>store.meta.budgetTotal, v=>store.meta.budgetTotal=v);
+  bindText('f_budgetSub', ()=>store.meta.budgetSub, v=>store.meta.budgetSub=v);
+  bindText('f_budgetBalance', ()=>store.meta.budgetBalance||'', v=>store.meta.budgetBalance=v);
+  bindText('f_committeeCount', ()=>store.meta.committeeCount, v=>store.meta.committeeCount=v);
+  bindText('f_committeeSub', ()=>store.meta.committeeSub, v=>store.meta.committeeSub=v);
+  bindText('f_logoUrl', ()=>store.meta.logoUrl||'', v=>store.meta.logoUrl=v);
+  bindText('f_manualUrl', ()=>store.meta.manualUrl, v=>store.meta.manualUrl=v);
+  bindText('f_footer', ()=>store.meta.footer, v=>store.meta.footer=v);
+}
+
+/* ---------- BUDGET ---------- */
+function renderBudgetEdit(){
+  const box = document.getElementById('budgetRowsEdit');
+  box.innerHTML = '';
+  store.budget.rows.forEach((row, i)=>{
+    const card = document.createElement('div');
+    card.className = 'item-card';
+    card.innerHTML = `
+      <button class="del" data-i="${i}">✕</button>
+      <div class="row2">
+        <div class="field"><label>항목명</label><input type="text" class="b-name">
+</div>
+        <div class="field"><label>집행률 (%)</label><input type="number" class="b-pct" min="0" max="100"></div>
+      </div>`;
+    const nameInput = card.querySelector('.b-name');
+    const pctInput = card.querySelector('.b-pct');
+    nameInput.value = row.name;
+    pctInput.value = row.pct;
+    nameInput.addEventListener('input', ()=> row.name = nameInput.value);
+    pctInput.addEventListener('input', ()=> row.pct = Math.max(0, Math.min(100, Number(pctInput.value)||0)));
+    card.querySelector('.del').addEventListener('click', ()=>{
+      store.budget.rows.splice(i,1);
+      renderBudgetEdit();
+    });
+    box.appendChild(card);
+  });
+
+  bindText('f_budgetAsOf', ()=>store.budget.asOf, v=>store.budget.asOf=v);
+  bindText('f_budgetWarn', ()=>store.budget.warn, v=>store.budget.warn=v);
+  bindText('f_budgetLinkLabel', ()=>store.budget.linkLabel, v=>store.budget.linkLabel=v);
+  bindText('f_budgetLinkUrl', ()=>store.budget.linkUrl, v=>store.budget.linkUrl=v);
+}
+document.getElementById('addBudgetRow').addEventListener('click', ()=>{
+  store.budget.rows.push({name:'새 항목', pct:0});
+  renderBudgetEdit();
+});
+
+document.getElementById('openBudgetStatsBtn').addEventListener('click', ()=>{
+  const url = store.budget.linkUrl || 'https://ch2ch.or.kr/Main_new2/Frame_Set.asp';
+  window.open(url, '_blank', 'noopener');
+  showToast('웹교회관리에서 최신 집행 현황을 확인한 뒤, 아래 항목에 숫자를 입력해주세요');
+});
+
+/* ---------- CHECKLIST ---------- */
+function renderChecklistEdit(){
+  const box = document.getElementById('checklistEdit');
+  box.innerHTML = '';
+  store.checklist.forEach((item, i)=>{
+    const isObj = item && typeof item === 'object';
+    const row = document.createElement('div');
+    row.className = 'item-card';
+    row.style.paddingRight = '38px';
+    row.innerHTML = `<button class="del" data-i="${i}">✕</button><input type="text" style="width:100%;border:1px solid #ddd;border-radius:8px;padding:8px 10px;font-size:13px;background:#fff">${isObj?`<div style="font-size:11px;color:#999;margin-top:4px">🔗 연결된 업체 정보 있음 (${item.vendor.name}) — 텍스트만 수정 가능</div>`:''}`;
+    const input = row.querySelector('input');
+    input.value = isObj ? item.text : item;
+    input.addEventListener('input', ()=>{
+      if(isObj) item.text = input.value; else store.checklist[i] = input.value;
+    });
+    row.querySelector('.del').addEventListener('click', ()=>{
+      store.checklist.splice(i,1);
+      renderChecklistEdit();
+    });
+    box.appendChild(row);
+  });
+}
+document.getElementById('addChecklistItem').addEventListener('click', ()=>{
+  store.checklist.push('새 항목');
+  renderChecklistEdit();
+});
+
+/* ---------- VENDORS ---------- */
+function renderVendorsEdit(){
+  const box = document.getElementById('vendorsEdit');
+  box.innerHTML = '';
+  store.vendors.forEach((v, i)=>{
+    const card = document.createElement('div');
+    card.className = 'item-card';
+    card.innerHTML = `
+      <button class="del">✕</button>
+      <div class="row2">
+        <div class="field"><label>구분 (예: 현수막·배너 제작)</label><input type="text" class="v-label"></div>
+        <div class="field"><label>업체명/담당자</label><input type="text" class="v-name"></div>
+      </div>
+      <div class="field"><label>연락처</label><input type="text" class="v-sub"></div>
+      <div class="field"><label>상세 정보 (가격/계좌 등)</label><input type="text" class="v-price"></div>`;
+    const f = k=>card.querySelector('.v-'+k);
+    f('label').value=v.label; f('name').value=v.name; f('sub').value=v.sub; f('price').value=v.price;
+    f('label').addEventListener('input',()=>v.label=f('label').value);
+    f('name').addEventListener('input',()=>v.name=f('name').value);
+    f('sub').addEventListener('input',()=>v.sub=f('sub').value);
+    f('price').addEventListener('input',()=>v.price=f('price').value);
+    card.querySelector('.del').addEventListener('click', ()=>{ store.vendors.splice(i,1); renderVendorsEdit(); });
+    box.appendChild(card);
+  });
+}
+document.getElementById('addVendor').addEventListener('click', ()=>{
+  store.vendors.push({label:'새 거래처', name:'', sub:'', price:''});
+  renderVendorsEdit();
+});
+
+/* ---------- TEAMS ---------- */
+function renderTeamsEdit(){
+  const box = document.getElementById('teamsEdit');
+  box.innerHTML = '';
+  Object.keys(store.teams).forEach(key=>{
+    const team = store.teams[key];
+    const card = document.createElement('div');
+    card.className = 'item-card';
+    card.innerHTML = `
+      <button class="del">✕</button>
+      <div class="field"><label>팀 이름</label><input type="text" class="t-name"></div>
+      <div class="field"><label>명단 (한 줄에 하나씩)</label><textarea class="t-lines" rows="5"></textarea></div>`;
+    card.querySelector('.t-name').value = team.name;
+    card.querySelector('.t-lines').value = team.lines.join('\n');
+    card.querySelector('.t-name').addEventListener('input', e=> team.name = e.target.value);
+    card.querySelector('.t-lines').addEventListener('input', e=> team.lines = e.target.value.split('\n'));
+    card.querySelector('.del').addEventListener('click', ()=>{
+      if(!confirm('이 팀을 삭제하면 "섬기는 분" 목록에서도 연결이 해제됩니다. 삭제할까요?')) return;
+      delete store.teams[key];
+      store.servants.forEach(s=>{ if(s.team===key) s.team=''; });
+      renderTeamsEdit();
+      renderServantsEdit();
+    });
+    box.appendChild(card);
+  });
+}
+document.getElementById('addTeam').addEventListener('click', ()=>{
+  const key = 'team_'+Date.now();
+  store.teams[key] = {name:'새 팀', lines:['<b>팀장</b> : ']};
+  renderTeamsEdit();
+  renderServantsEdit();
+});
+
+/* ---------- SERVANTS ---------- */
+function renderServantsEdit(){
+  const box = document.getElementById('servantsEdit');
+  box.innerHTML = '';
+  store.servants.forEach((s, i)=>{
+    const card = document.createElement('div');
+    card.className = 'item-card';
+    const teamOptions = ['<option value="">(연결 없음)</option>']
+      .concat(Object.keys(store.teams).map(k=>`<option value="${k}" ${s.team===k?'selected':''}>${store.teams[k].name}</option>`));
+    card.innerHTML = `
+      <button class="del">✕</button>
+      <div class="row2">
+        <div class="field"><label>직책</label><input type="text" class="s-label"></div>
+        <div class="field"><label>이름</label><input type="text" class="s-name"></div>
+      </div>
+      <div class="field"><label>연결할 팀 명단 (선택)</label><select class="s-team">${teamOptions.join('')}</select></div>`;
+    card.querySelector('.s-label').value = s.label;
+    card.querySelector('.s-name').value = s.name;
+    card.querySelector('.s-label').addEventListener('input', e=> s.label = e.target.value);
+    card.querySelector('.s-name').addEventListener('input', e=> s.name = e.target.value);
+    card.querySelector('.s-team').addEventListener('change', e=> s.team = e.target.value);
+    card.querySelector('.del').addEventListener('click', ()=>{ store.servants.splice(i,1); renderServantsEdit(); });
+    box.appendChild(card);
+  });
+}
+document.getElementById('addServant').addEventListener('click', ()=>{
+  store.servants.push({label:'새 직책', name:'', team:''});
+  renderServantsEdit();
+});
+
+/* ---------- CHIP LIST (tags / badges) ---------- */
+function renderChipList(container, list, colorOptions){
+  container.innerHTML = '';
+  list.forEach((item, i)=>{
+    const chip = document.createElement('span');
+    chip.className = 'chip';
+    const opts = colorOptions.map(([val,label])=>`<option value="${val}" ${item.c===val?'selected':''}>${label}</option>`).join('');
+    chip.innerHTML = `<input type="text" class="c-text"><select class="c-color">${opts}</select><button type="button" class="chip-del">✕</button>`;
+    const textEl = chip.querySelector('.c-text');
+    textEl.value = item.t !== undefined ? item.t : item.l;
+    textEl.addEventListener('input', ()=>{
+      if(item.t!==undefined) item.t = textEl.value; else item.l = textEl.value;
+    });
+    chip.querySelector('.c-color').addEventListener('change', e=> item.c = e.target.value);
+    chip.querySelector('.chip-del').addEventListener('click', ()=>{ list.splice(i,1); renderChipList(container, list, colorOptions); });
+    container.appendChild(chip);
+  });
+}
+
+/* ---------- MONTHS ---------- */
+function renderMonthsEdit(){
+  const box = document.getElementById('monthsEdit');
+  box.innerHTML = '';
+  for(let m=1; m<=12; m++){
+    const month = store.months[m];
+    if(!month) continue;
+    const block = document.createElement('div');
+    block.className = 'month-block';
+    const head = document.createElement('div');
+    head.className = 'month-head';
+    head.innerHTML = `<span><span class="chevron">▶</span><span class="mname">${month.label}</span></span><span class="mmeta">${month.weeks.length}개 주차 · ${month.major?'핵심행사월':'일반'}</span>`;
+    head.addEventListener('click', ()=> block.classList.toggle('open'));
+    const body = document.createElement('div');
+    body.className = 'month-body';
+
+    const labelField = document.createElement('div');
+    labelField.className = 'field';
+    labelField.innerHTML = `<label>월 표시명</label><input type="text" class="m-label" style="max-width:120px">`;
+    labelField.querySelector('.m-label').value = month.label;
+    labelField.querySelector('.m-label').addEventListener('input', e=>{ month.label = e.target.value; head.querySelector('.mname').textContent = e.target.value; });
+
+    const majorLine = document.createElement('label');
+    majorLine.className = 'checkline';
+    majorLine.innerHTML = `<input type="checkbox" class="m-major"> 핵심 행사 월로 표시 (달력에 붉은 테두리)`;
+    majorLine.querySelector('.m-major').checked = !!month.major;
+    majorLine.querySelector('.m-major').addEventListener('change', e=> month.major = e.target.checked);
+
+    const tagsField = document.createElement('div');
+    tagsField.className = 'field';
+    tagsField.innerHTML = `<label>월 태그</label><div class="chip-list"></div>`;
+    const tagsList = tagsField.querySelector('.chip-list');
+    renderChipList(tagsList, month.tags, TAG_COLORS);
+    const addTagBtn = document.createElement('button');
+    addTagBtn.className = 'add-btn';
+    addTagBtn.style.marginTop='6px';
+    addTagBtn.textContent = '+ 태그 추가';
+    addTagBtn.addEventListener('click', ()=>{ month.tags.push({t:'새 태그', c:'t-gray'}); renderChipList(tagsList, month.tags, TAG_COLORS); });
+
+    const weeksTitle = document.createElement('div');
+    weeksTitle.className = 'subhint';
+    weeksTitle.textContent = '주차별 상세 일정';
+    const weeksBox = document.createElement('div');
+
+    function renderWeeks(){
+      weeksBox.innerHTML = '';
+      month.weeks.forEach((w, wi)=>{
+        const wb = document.createElement('div');
+        wb.className = 'week-block';
+        wb.innerHTML = `
+          <button class="del">✕</button>
+          <div class="row2">
+            <div class="field"><label>주차 라벨 (예: 1주 (1/4))</label><input type="text" class="w-w"></div>
+            <div class="field"><label>제목</label><input type="text" class="w-title"></div>
+          </div>
+          <div class="field"><label>설명</label><textarea class="w-desc" rows="2"></textarea></div>
+          <label class="checkline"><input type="checkbox" class="w-alarm"> 사전 준비 필요 (알람 표시)</label>
+          <div class="field"><label>배지</label><div class="chip-list w-badges"></div></div>`;
+        wb.querySelector('.w-w').value = w.w;
+        wb.querySelector('.w-title').value = w.title;
+        wb.querySelector('.w-desc').value = w.desc;
+        wb.querySelector('.w-alarm').checked = !!w.alarm;
+        wb.querySelector('.w-w').addEventListener('input', e=> w.w = e.target.value);
+        wb.querySelector('.w-title').addEventListener('input', e=> w.title = e.target.value);
+        wb.querySelector('.w-desc').addEventListener('input', e=> w.desc = e.target.value);
+        wb.querySelector('.w-alarm').addEventListener('change', e=> w.alarm = e.target.checked);
+        const badgeList = wb.querySelector('.w-badges');
+        renderChipList(badgeList, w.badges, BADGE_COLORS);
+        const addBadgeBtn = document.createElement('button');
+        addBadgeBtn.className = 'add-btn';
+        addBadgeBtn.style.marginTop='6px';
+        addBadgeBtn.textContent = '+ 배지 추가';
+        addBadgeBtn.addEventListener('click', ()=>{ w.badges.push({l:'배지', c:'b-blue'}); renderChipList(badgeList, w.badges, BADGE_COLORS); });
+        wb.appendChild(addBadgeBtn);
+        wb.querySelector('.del').addEventListener('click', ()=>{ month.weeks.splice(wi,1); renderWeeks(); head.querySelector('.mmeta').textContent = `${month.weeks.length}개 주차 · ${month.major?'핵심행사월':'일반'}`; });
+        weeksBox.appendChild(wb);
+      });
+    }
+    renderWeeks();
+
+    const addWeekBtn = document.createElement('button');
+    addWeekBtn.className = 'add-btn';
+    addWeekBtn.style.marginTop = '4px';
+    addWeekBtn.textContent = '+ 주차 추가';
+    addWeekBtn.addEventListener('click', ()=>{
+      month.weeks.push({w:'', title:'새 일정', desc:'', badges:[], alarm:false});
+      renderWeeks();
+      head.querySelector('.mmeta').textContent = `${month.weeks.length}개 주차 · ${month.major?'핵심행사월':'일반'}`;
+    });
+
+    body.appendChild(labelField);
+    body.appendChild(majorLine);
+    body.appendChild(tagsField);
+    body.appendChild(addTagBtn);
+    body.appendChild(document.createElement('hr'));
+    body.appendChild(weeksTitle);
+    body.appendChild(weeksBox);
+    body.appendChild(addWeekBtn);
+
+    block.appendChild(head);
+    block.appendChild(body);
+    box.appendChild(block);
+  }
+}
+
+/* ---------- PIN CHANGE ---------- */
+document.getElementById('changePinBtn').addEventListener('click', ()=>{
+  const cur = document.getElementById('pinCurrent').value;
+  const next = document.getElementById('pinNew').value;
+  const confirmVal = document.getElementById('pinNewConfirm').value;
+  const saved = localStorage.getItem(PIN_KEY) || '';
+  if(cur !== saved){ showToast('현재 비밀번호가 올바르지 않습니다'); return; }
+  if(!/^\d{4}$/.test(next)){ showToast('새 비밀번호는 숫자 4자리여야 합니다'); return; }
+  if(next !== confirmVal){ showToast('새 비밀번호가 서로 다릅니다'); return; }
+  localStorage.setItem(PIN_KEY, next);
+  document.getElementById('pinCurrent').value='';
+  document.getElementById('pinNew').value='';
+  document.getElementById('pinNewConfirm').value='';
+  showToast('비밀번호가 변경되었습니다');
+});
+
+/* ---------- SAVE / RESET / EXPORT / IMPORT ---------- */
+document.getElementById('saveBtn').addEventListener('click', ()=>{
+  try{
+    WD.save(store);
+    showToast('저장되었습니다 ✓ 대시보드를 새로고침하면 반영됩니다');
+  }catch(e){
+    showToast('저장에 실패했습니다: '+e.message);
+  }
+});
+
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  if(!confirm('모든 내용을 기본값으로 되돌립니다. 저장하지 않은 변경사항은 사라집니다. 계속할까요?')) return;
+  store = WD.seed();
+  renderAll();
+  showToast('기본값으로 초기화했습니다 (저장 버튼을 눌러야 반영됩니다)');
+});
+
+document.getElementById('exportBtn').addEventListener('click', ()=>{
+  WD.exportData(store);
+});
+
+document.getElementById('importFile').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  e.target.value = '';
+  if(!file) return;
+  WD.importFromFile(file).then(parsed=>{
+    store = parsed;
+    renderAll();
+    showToast('파일을 불러왔습니다 (저장 버튼을 눌러야 반영됩니다)');
+  }).catch(err=>{
+    showToast(err.message);
+  });
+});
+
+function renderAll(){
+  renderMeta();
+  renderBudgetEdit();
+  renderChecklistEdit();
+  renderVendorsEdit();
+  renderTeamsEdit();
+  renderServantsEdit();
+  renderMonthsEdit();
+}
+
+initLock();
+</script>
+</body>
+</html>

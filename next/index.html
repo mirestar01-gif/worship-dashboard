@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>서울중앙교회 예배위원회</title>
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-180.png">
+<meta name="theme-color" content="#1d4ed8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="예배위원회">
+<meta name="mobile-web-app-capable" content="yes">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans-serif;background:#f5f4f0;color:#1a1a18;min-height:100vh}
+.header{background:#fff;border-bottom:1px solid #e5e4e0;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.header-left h1{font-size:18px;font-weight:600;color:#1a1a18}
+.header-left p{font-size:12px;color:#888;margin-top:2px}
+.header-right{display:flex;align-items:center;gap:14px}
+.year-nav{display:flex;align-items:center;gap:8px}
+.year-nav button{background:none;border:1px solid #ddd;border-radius:8px;padding:5px 12px;font-size:13px;cursor:pointer;color:#333;transition:background 0.1s}
+.year-nav button:hover{background:#f0efeb}
+.year-display{font-size:16px;font-weight:600;min-width:52px;text-align:center}
+.settings-link{font-size:12px;color:#888;text-decoration:none;border:1px solid #ddd;border-radius:8px;padding:5px 12px;transition:background 0.1s}
+.settings-link:hover{background:#f0efeb;color:#555}
+.wrap{max-width:1100px;margin:0 auto;padding:20px 16px}
+.stats-row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px}
+.stat-card{background:#fff;border-radius:12px;padding:14px 16px;border:1px solid #e8e7e3}
+.stat-card .lbl{font-size:11px;color:#888;margin-bottom:4px}
+.stat-card .val{font-size:24px;font-weight:600;color:#1a1a18}
+.stat-card .sub{font-size:11px;color:#aaa;margin-top:2px}
+.stat-manual-link{display:inline-flex;align-items:center;gap:3px;font-size:11px;color:#2563eb;text-decoration:none;font-weight:600;margin-top:8px}
+.stat-manual-link:hover{text-decoration:underline}
+.section-title{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px}
+.cal-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:20px}
+.month-card{background:#fff;border:1px solid #e8e7e3;border-radius:10px;padding:10px 12px;cursor:pointer;transition:all 0.15s}
+.month-card:hover{border-color:#bbb;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.month-card.active{border:2px solid #2563eb;background:#eff6ff}
+.month-card.major{border-color:#fca5a5}
+.month-name{font-size:13px;font-weight:600;color:#1a1a18;margin-bottom:5px}
+.month-tags{display:flex;flex-wrap:wrap;gap:3px}
+.tag{font-size:10px;padding:2px 5px;border-radius:4px;font-weight:500}
+.tag.t-red{background:#fee2e2;color:#b91c1c}
+.tag.t-blue{background:#dbeafe;color:#1d4ed8}
+.tag.t-green{background:#dcfce7;color:#15803d}
+.tag.t-amber{background:#fef3c7;color:#92400e}
+.tag.t-gray{background:#f3f4f6;color:#374151}
+.detail-panel{background:#fff;border:1px solid #e8e7e3;border-radius:12px;padding:20px;margin-bottom:20px}
+.detail-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px;margin-bottom:14px}
+.detail-header h2{font-size:16px;font-weight:600}
+.detail-header span{font-size:12px;color:#888}
+.week-list{display:flex;flex-direction:column;gap:8px}
+.week-item{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;background:#fafaf9;border-radius:8px;border:1px solid #e8e7e3}
+.alarm-dot{width:8px;height:8px;border-radius:50%;margin-top:4px;flex-shrink:0}
+.alarm-dot.on{background:#dc2626}
+.alarm-dot.off{background:#d1d5db}
+.week-content{flex:1}
+.week-w{font-size:11px;color:#888;margin-bottom:2px}
+.week-title{font-size:13px;font-weight:600;color:#1a1a18;margin-bottom:2px}
+.week-desc{font-size:12px;color:#666;line-height:1.5}
+.week-badges{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px}
+.badge{font-size:10px;padding:2px 7px;border-radius:999px;font-weight:500}
+.b-red{background:#fee2e2;color:#b91c1c}
+.b-blue{background:#dbeafe;color:#1d4ed8}
+.b-green{background:#dcfce7;color:#15803d}
+.b-amber{background:#fef3c7;color:#92400e}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.panel{background:#fff;border:1px solid #e8e7e3;border-radius:12px;padding:16px 18px}
+.checklist{display:flex;flex-direction:column;gap:7px;margin-top:8px}
+.check-item{display:flex;align-items:center;gap:8px;font-size:13px;color:#1a1a18}
+.check-item-label{display:flex;align-items:center;gap:8px;cursor:pointer;flex:1;min-width:0}
+.check-item input{accent-color:#2563eb;width:15px;height:15px;cursor:pointer;flex-shrink:0}
+.check-item.done .check-item-label span{text-decoration:line-through;color:#aaa}
+.checklist-link-btn{margin-left:auto;flex-shrink:0;font-size:11px;color:#2563eb;background:#eff6ff;border:1px solid #dbeafe;border-radius:999px;padding:3px 10px;font-weight:600;cursor:pointer;white-space:nowrap}
+.checklist-link-btn:hover{background:#dbeafe}
+.month-dd{position:relative;display:inline-block}
+.month-dd-btn{font-size:22px;border:1px solid #dbeafe;border-radius:999px;padding:4px 14px 4px 16px;color:#2563eb;background:#eff6ff;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:background 0.15s,box-shadow 0.15s}
+.month-dd-btn:hover{background:#dbeafe}
+.month-dd-btn:focus-visible{outline:2px solid #2563eb;outline-offset:2px}
+.month-dd-arrow{font-size:13px;color:#60a5fa;transition:transform 0.2s ease}
+.month-dd.open .month-dd-btn{background:#dbeafe;box-shadow:0 0 0 3px rgba(37,99,235,0.12)}
+.month-dd.open .month-dd-arrow{transform:rotate(180deg)}
+.month-dd-list{position:absolute;top:calc(100% + 8px);left:0;z-index:30;background:#fff;border:1px solid #e8e7e3;border-radius:16px;box-shadow:0 12px 32px rgba(20,20,15,0.14),0 2px 8px rgba(20,20,15,0.06);padding:8px;min-width:130px;max-height:280px;overflow-y:auto;visibility:hidden;opacity:0;transform:translateY(-6px) scale(0.98);transform-origin:top left;transition:opacity 0.14s ease,transform 0.14s ease,visibility 0.14s}
+.month-dd.open .month-dd-list{visibility:visible;opacity:1;transform:translateY(0) scale(1)}
+.month-dd-option{padding:9px 14px;border-radius:10px;font-size:15px;font-weight:500;color:#333;cursor:pointer;transition:background 0.1s,color 0.1s}
+.month-dd-option:hover{background:#f0efeb}
+.month-dd-option.selected{background:#2563eb;color:#fff;font-weight:700}
+.month-dd-option.selected:hover{background:#1d4ed8}
+.checklist-vendor-info{display:none;margin-left:23px;padding:10px 12px;background:#fafaf9;border-radius:8px;border:1px solid #e8e7e3}
+.checklist-vendor-info.open{display:block}
+.checklist-vendor-info .info-lbl{font-size:10px;color:#888;margin-bottom:3px}
+.checklist-vendor-info .info-name{font-size:13px;font-weight:600;color:#1a1a18}
+.checklist-vendor-info .info-sub{font-size:11px;color:#666;margin-top:2px}
+.checklist-vendor-info .info-price{font-size:10px;color:#888;margin-top:3px}
+.budget-rows{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.budget-row{display:flex;align-items:center;gap:8px}
+.budget-name{font-size:12px;color:#555;min-width:90px}
+.budget-bar-wrap{flex:1;background:#f0efeb;border-radius:4px;height:7px;overflow:hidden}
+.budget-bar{height:100%;border-radius:4px;background:#2563eb;transition:width 0.6s ease}
+.budget-bar.warn{background:#f59e0b}
+.budget-bar.danger{background:#dc2626}
+.budget-pct{font-size:11px;color:#888;min-width:30px;text-align:right}
+.budget-warn{margin-top:10px;padding:8px 10px;background:#fef3c7;border-radius:8px;font-size:11px;color:#92400e}
+
+.budget-panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.budget-panel-divider{height:1px;background:#e8e7e3;margin:18px 0 14px}
+.budget-pct-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:#eff6ff;color:#2563eb;white-space:nowrap}
+.budget-pct-badge.warn{background:#fef3c7;color:#92400e}
+.budget-pct-badge.danger{background:#fee2e2;color:#b91c1c}
+.budget-card-figures{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.budget-figure-lbl{font-size:10px;color:#aaa;margin-bottom:2px}
+.budget-figure-val{font-size:24px;font-weight:600;color:#1a1a18;font-variant-numeric:tabular-nums;line-height:1.15}
+.budget-figure-val.accent{color:#2563eb}
+.budget-figure.align-right{text-align:right}
+.budget-progress-wrap{background:#f0efeb;border-radius:6px;height:8px;overflow:hidden}
+.budget-progress-bar{height:100%;border-radius:6px;background:#2563eb;transition:width 0.6s ease;width:0%}
+.budget-progress-bar.warn{background:#f59e0b}
+.budget-progress-bar.danger{background:#dc2626}
+.budget-progress-labels{display:flex;align-items:baseline;justify-content:space-between;gap:8px;color:#888;font-variant-numeric:tabular-nums}
+.budget-spent-val{font-size:24px;font-weight:600;color:#1a1a18}
+.budget-pct-sub{font-size:11px;white-space:nowrap}
+
+@media(max-width:420px){
+.budget-card-figures{gap:8px}
+.budget-figure-val{font-size:20px}
+.budget-spent-val{font-size:20px}
+}
+.info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px}
+.info-card{padding:10px 12px;background:#fafaf9;border-radius:8px;border:1px solid #e8e7e3}
+.info-lbl{font-size:10px;color:#888;margin-bottom:3px}
+.info-name{font-size:13px;font-weight:600;color:#1a1a18}
+.info-sub{font-size:11px;color:#666;margin-top:2px}
+.info-price{font-size:10px;color:#888;margin-top:3px}
+.alarm-legend{display:flex;align-items:center;gap:6px;font-size:11px;color:#888;margin-bottom:12px}
+.alarm-legend span{display:flex;align-items:center;gap:4px}
+footer{text-align:center;padding:20px;font-size:11px;color:#bbb}
+
+/* 팀원 명단 펼치기 기능 추가 스타일 */
+.info-card.clickable{cursor:pointer;transition:all 0.15s;position:relative}
+.info-card.clickable:hover{border-color:#93c5fd;box-shadow:0 2px 8px rgba(37,99,235,0.08)}
+.info-card.clickable .info-lbl{display:flex;align-items:center;justify-content:space-between}
+.info-card.clickable .expand-arrow{font-size:10px;color:#93c5fd;transition:transform 0.2s}
+.info-card.clickable.open .expand-arrow{transform:rotate(90deg)}
+.team-members{display:none;margin-top:8px;padding-top:8px;border-top:1px dashed #e0dfda;font-size:11px;color:#555;line-height:1.6}
+.info-card.clickable.open .team-members{display:block}
+.team-members b{color:#1a1a18;font-weight:600}
+.team-members .role-line{margin-bottom:3px}
+
+@media(max-width:768px){
+.stats-row{grid-template-columns:repeat(2,1fr)}
+.cal-grid{grid-template-columns:repeat(3,1fr)}
+.two-col{grid-template-columns:1fr}
+.info-grid{grid-template-columns:1fr}
+.header{flex-direction:column;gap:10px;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+<div class="header">
+<div class="header-left">
+<h1><span id="siteTitle">📋 예배위원회 운영 대시보드</span></h1>
+</div>
+<div class="header-right">
+<div class="year-nav">
+<button onclick="changeYear(-1)">‹ 이전</button>
+<span class="year-display" id="yearDisplay">2026</span>
+<button onclick="changeYear(1)">다음 ›</button>
+</div>
+<a class="settings-link" href="./settings.html">⚙ 관리 설정</a>
+</div>
+</div>
+<div class="wrap">
+<div class="stats-row">
+<div class="stat-card"><div class="lbl" style="display:flex;align-items:center;justify-content:space-between">이번 달<button type="button" id="thisMonthOpenBtn" class="checklist-link-btn" style="margin-left:0">사이트 열기 ↗</button></div><div class="val" id="thisMonth">-</div><div class="sub" id="monthTags">-</div></div>
+<div class="stat-card"><div style="display:flex;align-items:center;gap:8px"><div class="month-dd" id="monthDd"><button type="button" class="month-dd-btn" id="monthDdBtn"><span id="monthDdLabel">-</span><span class="month-dd-arrow">▾</span></button><div class="month-dd-list" id="monthDdList"></div></div><button type="button" id="monthPickerOpenBtn" class="checklist-link-btn" style="margin-left:0">사이트 열기 ↗</button></div></div>
+</div>
+
+<div class="detail-panel">
+<div class="detail-header">
+<h2 id="detailTitle">월 상세 일정</h2>
+<span id="detailSub">위에서 달을 선택하고 사이트 열기를 눌러주세요</span>
+</div>
+<div class="week-list" id="weekList">
+<div style="text-align:center;padding:0.5rem 0;color:#aaa;font-size:12px">↑ 위에서 달을 선택하고 사이트 열기를 누르면 주차별 상세 일정이 표시됩니다</div>
+</div>
+</div>
+
+<div class="panel" style="margin-bottom:20px">
+<div class="section-title">위원장 연간 체크리스트</div>
+<div class="checklist" id="checklist"></div>
+</div>
+
+<div class="panel budget-panel" style="margin-bottom:20px">
+<div class="budget-panel-head">
+<div class="section-title" style="margin-bottom:0">연간 예산 (예배비)</div>
+<div class="budget-pct-badge" id="budgetPctBadge">-</div>
+</div>
+<div class="budget-card-figures">
+<div class="budget-figure">
+<div class="budget-figure-lbl">총예산</div>
+<div class="budget-figure-val" id="budgetTotalVal">5,120만</div>
+<div class="sub" id="budgetSubVal">2026년 신청 기준</div>
+</div>
+<div class="budget-figure align-right">
+<div class="budget-figure-lbl">총잔액</div>
+<div class="budget-figure-val accent" id="budgetBalanceVal">-</div>
+</div>
+</div>
+<div class="budget-progress-wrap"><div class="budget-progress-bar" id="budgetProgressBar"></div></div>
+<div class="budget-progress-labels"><span id="budgetSpentLabel" class="budget-spent-val">-</span><span id="budgetPctLabel" class="budget-pct-sub"></span></div>
+<div class="budget-panel-divider"></div>
+<div class="section-title" id="budgetAsOf">예산 집행 현황</div>
+<div class="budget-rows" id="budgetRows"></div>
+<div class="budget-warn" id="budgetWarn"></div>
+<a id="budgetLink" href="#" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;margin-top:8px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;color:#1d4ed8;text-decoration:none;font-size:14px;font-weight:600">
+<span id="budgetLinkLabel">📊 위원회재정통계 (웹교회관리)</span>
+<span style="font-size:12px;font-weight:500;color:#2563eb">사이트 열기 ↗</span>
+</a>
+</div>
+
+<div class="panel" style="margin-bottom:20px">
+<div class="section-title">예배위원회 섬기는 분</div>
+<div class="info-grid" style="grid-template-columns:repeat(2,1fr)" id="servantGrid"></div>
+</div>
+
+
+</div>
+<footer>
+<img id="siteLogo" alt="교회 로고" style="height:48px;display:none;margin-bottom:8px">
+<div id="siteFooter">서울중앙교회 예배위원회 운영 대시보드 · 최초 작성 2026년 · 매년 업데이트 권장</div>
+</footer>
+
+<script src="./data/seed.js"></script>
+<script src="./assets/store.js"></script>
+<script>
+// 기본값은 data/seed.js(window.WD_SEED), 저장/불러오기는 assets/store.js(WD)가 담당합니다.
+const STORE = WD.load();
+let currentYear = STORE.meta.year || 2026;
+let selectedMonth = null;
+
+function changeYear(d){
+  currentYear += d;
+  document.getElementById('yearDisplay').textContent = currentYear;
+}
+
+function parseAmountKRW(str){
+  if(!str) return null;
+  let s = String(str).replace(/,/g,'').replace(/원/g,'').trim();
+  let total = 0, matched = false;
+  const eok = s.match(/([\d.]+)\s*억/);
+  if(eok){ total += parseFloat(eok[1]) * 100000000; s = s.replace(eok[0],''); matched = true; }
+  const man = s.match(/([\d.]+)\s*만/);
+  if(man){ total += parseFloat(man[1]) * 10000; s = s.replace(man[0],''); matched = true; }
+  const rest = s.replace(/[^\d.]/g,'');
+  if(rest){ total += parseFloat(rest); matched = true; }
+  return matched ? total : null;
+}
+
+function updateBudgetProgress(totalStr, balanceStr){
+  const badge = document.getElementById('budgetPctBadge');
+  const bar = document.getElementById('budgetProgressBar');
+  const spentLbl = document.getElementById('budgetSpentLabel');
+  const pctLbl = document.getElementById('budgetPctLabel');
+  const total = parseAmountKRW(totalStr);
+  const balance = parseAmountKRW(balanceStr);
+  badge.classList.remove('warn','danger');
+  bar.classList.remove('warn','danger');
+  if(total===null || balance===null || total<=0){
+    badge.textContent = '-';
+    bar.style.width = '0%';
+    spentLbl.textContent = '집행 현황 미입력';
+    pctLbl.textContent = '';
+    return;
+  }
+  const spent = Math.max(0, total - balance);
+  const pct = Math.min(100, Math.round(spent/total*100));
+  badge.textContent = '집행률 '+pct+'%';
+  bar.style.width = pct+'%';
+  if(pct>=85){ bar.classList.add('danger'); badge.classList.add('danger'); }
+  else if(pct>=60){ bar.classList.add('warn'); badge.classList.add('warn'); }
+  spentLbl.textContent = '집행 '+Math.round(spent).toLocaleString('ko-KR')+'원';
+  pctLbl.textContent = pct+'% 사용';
+}
+
+function applyMeta(){
+  document.getElementById('siteTitle').textContent = STORE.meta.title;
+  const logoEl = document.getElementById('siteLogo');
+  if(STORE.meta.logoUrl){
+    logoEl.src = STORE.meta.logoUrl;
+    logoEl.style.display = 'inline';
+  }else{
+    logoEl.style.display = 'none';
+  }
+  document.getElementById('yearDisplay').textContent = currentYear;
+  document.getElementById('budgetTotalVal').textContent = STORE.meta.budgetTotal;
+  document.getElementById('budgetSubVal').textContent = STORE.meta.budgetSub;
+  document.getElementById('budgetBalanceVal').textContent = STORE.meta.budgetBalance || '-';
+  updateBudgetProgress(STORE.meta.budgetTotal, STORE.meta.budgetBalance);
+  document.getElementById('siteFooter').textContent = STORE.meta.footer;
+}
+
+function markDone(i){
+  const el = document.getElementById('ci'+i);
+  el.classList.toggle('done', el.querySelector('input').checked);
+}
+
+function renderChecklist(){
+  const box = document.getElementById('checklist');
+  box.innerHTML = STORE.checklist.map((item,i)=>{
+    const isObj = item && typeof item === 'object';
+    const text = isObj ? item.text : item;
+    const btn = isObj ? `<button type="button" class="checklist-link-btn" data-idx="${i}">사이트 열기 ↗</button>` : '';
+    const vendorBox = isObj ? `<div class="checklist-vendor-info" id="cv${i}">
+<div class="info-lbl">${item.vendor.label}</div>
+<div class="info-name">${item.vendor.name}</div>
+<div class="info-sub">${item.vendor.sub}</div>
+<div class="info-price">${item.vendor.price}</div>
+${item.vendor.manualLink?`<a class="stat-manual-link" href="${STORE.meta.manualUrl}" target="_blank" rel="noopener">📄 메뉴얼 PDF 열기 ↗</a>`:''}
+</div>` : '';
+    return `<div class="check-item" id="ci${i}">
+<label class="check-item-label"><input type="checkbox" onchange="markDone(${i})"><span>${text}</span></label>
+${btn}
+</div>${vendorBox}`;
+  }).join('');
+  initChecklistLinks();
+}
+
+function initChecklistLinks(){
+  document.querySelectorAll('.checklist-link-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const box = document.getElementById('cv'+btn.getAttribute('data-idx'));
+      if(box) box.classList.toggle('open');
+    });
+  });
+}
+
+function renderBudget(){
+  const b = STORE.budget;
+  document.getElementById('budgetAsOf').textContent = '예산 집행 현황 ('+b.asOf+')';
+  document.getElementById('budgetRows').innerHTML = b.rows.map(r=>{
+    const cls = r.pct>=85 ? 'danger' : (r.pct>=60 ? 'warn' : '');
+    return `<div class="budget-row"><span class="budget-name">${r.name}</span><div class="budget-bar-wrap"><div class="budget-bar ${cls}" style="width:${r.pct}%"></div></div><span class="budget-pct">${r.pct}%</span></div>`;
+  }).join('');
+  document.getElementById('budgetWarn').textContent = b.warn;
+  document.getElementById('budgetWarn').style.display = b.warn ? '' : 'none';
+  document.getElementById('budgetLink').href = b.linkUrl;
+  document.getElementById('budgetLinkLabel').textContent = b.linkLabel;
+}
+
+function renderServants(){
+  document.getElementById('servantGrid').innerHTML = STORE.servants.map(s=>{
+    const clickable = s.team && STORE.teams[s.team];
+    return `
+<div class="info-card${clickable?' clickable':''}"${clickable?` data-team="${s.team}"`:''}>
+<div class="info-lbl">${s.label}${clickable?' <span class="expand-arrow">▶</span>':''}</div>
+<div class="info-name">${s.name}</div>
+${clickable?'<div class="team-members"></div>':''}
+</div>`;
+  }).join('');
+}
+
+function initMonthPicker(){
+  const dd = document.getElementById('monthDd');
+  const btn = document.getElementById('monthDdBtn');
+  const label = document.getElementById('monthDdLabel');
+  const list = document.getElementById('monthDdList');
+  if(!dd || !btn || !label || !list) return;
+  const nowM = new Date().getMonth()+1;
+  let selectedMonth = nowM;
+  list.innerHTML = '';
+  for(let m=1;m<=12;m++){
+    const d = STORE.months[m];
+    if(!d) continue;
+    const opt = document.createElement('div');
+    opt.className = 'month-dd-option'+(m===nowM?' selected':'');
+    opt.textContent = d.label;
+    opt.dataset.value = m;
+    opt.addEventListener('click', ()=>{
+      selectedMonth = m;
+      label.textContent = d.label;
+      list.querySelectorAll('.month-dd-option').forEach(o=>o.classList.toggle('selected', o===opt));
+      dd.classList.remove('open');
+    });
+    list.appendChild(opt);
+    if(m===nowM) label.textContent = d.label;
+  }
+  btn.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    dd.classList.toggle('open');
+    if(dd.classList.contains('open')){
+      const cur = list.querySelector('.month-dd-option.selected');
+      if(cur) cur.scrollIntoView({block:'nearest'});
+    }
+  });
+  document.addEventListener('click', (e)=>{
+    if(!dd.contains(e.target)) dd.classList.remove('open');
+  });
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape') dd.classList.remove('open');
+  });
+  const openBtn = document.getElementById('monthPickerOpenBtn');
+  if(openBtn){
+    openBtn.addEventListener('click', ()=>{
+      toggleDetail(selectedMonth);
+    });
+  }
+}
+
+function renderDetail(m){
+  const d = STORE.months[m];
+  if(!d) return;
+  document.getElementById('detailTitle').textContent = currentYear+'년 '+d.label+' 상세 일정';
+  document.getElementById('detailSub').textContent = '알람 필요 항목은 빨간 점으로 표시';
+  const list = document.getElementById('weekList');
+  list.innerHTML = d.weeks.map(w=>{
+    const badges = w.badges.map(b=>`<span class="badge ${b.c}">${b.l}</span>`).join('');
+    return `<div class="week-item">
+<div class="alarm-dot ${w.alarm?'on':'off'}" title="${w.alarm?'사전 준비·알람 권장':''}"></div>
+<div class="week-content">
+<div class="week-w">${w.w}</div>
+<div class="week-title">${w.title}</div>
+<div class="week-desc">${w.desc}</div>
+<div class="week-badges">${badges}</div>
+</div>
+</div>`;
+  }).join('');
+}
+
+let detailOpenMonth = null;
+function closeDetail(){
+  document.getElementById('detailTitle').textContent = '월 상세 일정';
+  document.getElementById('detailSub').textContent = '위에서 달을 선택하고 사이트 열기를 눌러주세요';
+  document.getElementById('weekList').innerHTML = '<div style="text-align:center;padding:0.5rem 0;color:#aaa;font-size:12px">↑ 위에서 달을 선택하고 사이트 열기를 누르면 주차별 상세 일정이 표시됩니다</div>';
+  detailOpenMonth = null;
+}
+function toggleDetail(m){
+  if(detailOpenMonth === m){
+    closeDetail();
+  } else {
+    selectedMonth = m;
+    renderDetail(m);
+    detailOpenMonth = m;
+    document.getElementById('weekList').scrollIntoView({behavior:'smooth', block:'start'});
+  }
+}
+
+function initStats(){
+  const m = new Date().getMonth()+1;
+  const d = STORE.months[m];
+  if(!d) return;
+  document.getElementById('thisMonth').textContent = m+'월';
+  document.getElementById('monthTags').textContent = d.tags.map(t=>t.t).join(' · ');
+  const openBtn = document.getElementById('thisMonthOpenBtn');
+  if(openBtn){
+    openBtn.addEventListener('click', ()=>{
+      toggleDetail(m);
+    });
+  }
+}
+
+// 팀 카드 클릭 시 팀원 명단 펼치기/접기
+function initTeamCards(){
+  document.querySelectorAll('.info-card.clickable').forEach(card=>{
+    const key = card.getAttribute('data-team');
+    const team = STORE.teams[key];
+    if(!team) return;
+    const box = card.querySelector('.team-members');
+    box.innerHTML = team.lines.map(l=>`<div class="role-line">${l}</div>`).join('');
+    card.addEventListener('click', ()=>{
+      card.classList.toggle('open');
+    });
+  });
+}
+
+applyMeta();
+renderChecklist();
+renderBudget();
+renderServants();
+initStats();
+initMonthPicker();
+initTeamCards();
+</script>
+</body>
+</html>
